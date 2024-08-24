@@ -1,0 +1,27 @@
+//buildscript {
+//    repositories {
+//        google()
+//        mavenCentral()
+//    }
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        //classpath 'com.android.tools.build:gradle:7.4.2'
+        //classpath 'com.google.gms:google-services:4.4.2'
+        classpath 'com.android.tools.build:gradle:7.4.0'
+        classpath 'com.google.gms:google-services:4.3.14'
+    }
+}
+////
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+// No need to re-define repositories in the project-level build file
+// since they are defined in settings.gradle.
