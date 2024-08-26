@@ -8,14 +8,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView back, menu;
-
+    private boolean isAdmin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Retrieve the role information from the Intent
+        isAdmin = getIntent().getBooleanExtra("isAdmin", false);
+
+        // Handle UI and functionality based on user role
+        if (isAdmin) {
+            // Show admin-specific options
+            Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show();
+            // You can now enable admin-specific features here
+        } else {
+            // Show regular user options
+            Toast.makeText(this, "Welcome User!", Toast.LENGTH_SHORT).show();
+            // You can now restrict access or hide admin features here
+        }
+
         back = findViewById(R.id.left_icon);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
