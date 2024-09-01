@@ -1,17 +1,16 @@
 package com.example.foorballapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private MatchAdapter matchAdapter;
     private TextView noMatchesTextView;
     private List<Match> matchList = new ArrayList<>();
+    private Button roundButtonPlus;
+    private Button roundButtonMinus;
+    //private EditText editTextTeam1ID, editTextTeam2ID, editTextScoreTeam1, editTextScoreTeam2, editTextMatchDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,33 +45,43 @@ public class MainActivity extends AppCompatActivity {
         // Retrieve the role information from the Intent
         isAdmin = getIntent().getBooleanExtra("isAdmin", false);
 
-        // Handle UI and functionality based on user role
-        if (isAdmin) {
-            Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show();
-            // Enable admin-specific features here
-        } else {
-            Toast.makeText(this, "Welcome User!", Toast.LENGTH_SHORT).show();
-            // Restrict access or hide admin features here
-        }
-
+        // Initialize views
         back = findViewById(R.id.left_icon);
         back.setOnClickListener(v -> onBackPressed());
 
         menu = findViewById(R.id.right_icon);
         menu.setOnClickListener(this::showPopupMenu);
-
         recyclerView = findViewById(R.id.recyclerViewMatches);
+        roundButtonPlus = findViewById(R.id.roundButtonPlus);
+        roundButtonMinus = findViewById(R.id.roundButtonMinus);
+        //editTextTeam1ID = findViewById(R.id.editTextTeam1ID);
+        //editTextTeam2ID = findViewById(R.id.editTextTeam2ID);
+        //editTextScoreTeam1 = findViewById(R.id.editTextScoreTeam1);
+        //editTextScoreTeam2 = findViewById(R.id.editTextScoreTeam2);
+        //editTextMatchDate = findViewById(R.id.editTextMatchDate);
+        noMatchesTextView = findViewById(R.id.noMatchesTextView);
+
+        // Handle UI and functionality based on user role
+        if (isAdmin) {
+            Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show();
+            roundButtonPlus.setVisibility(View.VISIBLE);
+            roundButtonMinus.setVisibility(View.VISIBLE);
+            roundButtonPlus.setOnClickListener(v -> showAddMatchDialog());
+            roundButtonMinus.setOnClickListener(v -> showRemoveMatchDialog());
+        } else {
+            Toast.makeText(this, "Welcome User!", Toast.LENGTH_SHORT).show();
+            roundButtonPlus.setVisibility(View.GONE);
+            roundButtonMinus.setVisibility(View.GONE);
+        }
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         matchAdapter = new MatchAdapter(matchList);
         recyclerView.setAdapter(matchAdapter);
-
-        noMatchesTextView = findViewById(R.id.noMatchesTextView);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:3000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         apiService = retrofit.create(ApiService.class);
 
         fetchTodayMatches();
@@ -91,7 +103,16 @@ public class MainActivity extends AppCompatActivity {
 
         popupMenu.show();
     }
-    private void fetchTodayMatches() {
+    private void showAddMatchDialog() {
+        AddMatchBottomSheetFragment bottomSheetFragment = new AddMatchBottomSheetFragment();
+        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+    }
+    private void showRemoveMatchDialog() {
+        RemoveMatchBottomSheetFragment removeMatchFragment = new RemoveMatchBottomSheetFragment();
+        removeMatchFragment.show(getSupportFragmentManager(), removeMatchFragment.getTag());
+    }
+
+    public void fetchTodayMatches() {
         Call<List<Match>> call = apiService.getTodayMatches();
         call.enqueue(new Callback<List<Match>>() {
             @Override
@@ -130,4 +151,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

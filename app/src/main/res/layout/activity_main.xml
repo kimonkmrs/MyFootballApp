@@ -19,12 +19,10 @@
         android:clipToPadding="false"
         android:padding="16dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.53" />
+        app:layout_constraintBottom_toTopOf="@+id/roundButtonPlus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- TextView to show "No match today" -->
     <TextView
@@ -35,8 +33,37 @@
         android:textSize="18sp"
         android:visibility="gone"
         android:layout_gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/roundButtonPlus"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+    <!-- Round + Button -->
+    <Button
+        android:id="@+id/roundButtonPlus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/baseline_add_circle_24"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/roundButtonMinus"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewMatches" />
+
+    <!-- Round - Button Minus -->
+    <Button
+        android:id="@+id/roundButtonMinus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/baseline_remove_circle_24"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/roundButtonPlus"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewMatches" />
 </androidx.constraintlayout.widget.ConstraintLayout>

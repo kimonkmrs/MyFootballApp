@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextTeam1ID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Team 1 ID"
+        android:inputType="number"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/editTextTeam2ID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Team 2 ID"
+        android:inputType="number"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/editTextScoreTeam1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Score Team 1"
+        android:inputType="number"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/editTextScoreTeam2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Score Team 2"
+        android:inputType="number"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/editTextMatchDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Match Date (YYYY-MM-DDTHH:MM:SSZ)"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/buttonSaveMatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Match" />
+
+</LinearLayout>

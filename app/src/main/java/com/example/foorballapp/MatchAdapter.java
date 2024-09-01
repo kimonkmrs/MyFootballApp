@@ -28,6 +28,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
     @Override
     public void onBindViewHolder(@NonNull MatchViewHolder holder, int position) {
         Match match = matchList.get(position);
+        holder.matchId.setText(String.valueOf(match.getMatchID()));
         holder.team1Name.setText(match.getTeam1Name());
         holder.team2Name.setText(match.getTeam2Name());
         holder.team1Score.setText(String.valueOf(match.getScoreTeam1()));
@@ -47,10 +48,11 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
     }
 
     public static class MatchViewHolder extends RecyclerView.ViewHolder {
-        TextView team1Name, team2Name, team1Score, team2Score, matchTime;
+        TextView team1Name, team2Name, team1Score, team2Score, matchTime,matchId;
 
         public MatchViewHolder(@NonNull View itemView) {
             super(itemView);
+            matchId=itemView.findViewById(R.id.matchId);
             team1Name = itemView.findViewById(R.id.team1Name);
             team2Name = itemView.findViewById(R.id.team2Name);
             team1Score = itemView.findViewById(R.id.team1Score);
