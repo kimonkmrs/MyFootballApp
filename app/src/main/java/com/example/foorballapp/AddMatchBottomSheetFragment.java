@@ -1,5 +1,6 @@
 package com.example.foorballapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
+    public interface OnMatchAddedListener {
+        void onMatchAdded();
+    }
+
+    private OnMatchAddedListener onMatchAddedListener;
+
+    public void setOnMatchAddedListener(OnMatchAddedListener listener) {
+        this.onMatchAddedListener = listener;
+    }
     private EditText editTextTeam1ID, editTextTeam2ID, editTextScoreTeam1, editTextScoreTeam2, editTextMatchDate;
     private Button buttonSaveMatch;
     private ApiService apiService;
@@ -36,6 +46,7 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
     private static final Locale GREEK_LOCALE = new Locale("el", "GR");
     private static final SimpleDateFormat INPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat OUTPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
 
     @Nullable
@@ -50,6 +61,7 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
         editTextScoreTeam2 = view.findViewById(R.id.editTextScoreTeam2);
         editTextMatchDate = view.findViewById(R.id.editTextMatchDate);
         buttonSaveMatch = view.findViewById(R.id.buttonSaveMatch);
+
 
         // Set up Retrofit
         Retrofit retrofit = new Retrofit.Builder()
@@ -80,25 +92,19 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
                 return;
             }
 
-            // Create MatchRequest object
+            // Create MatchRequest object with matchDate
             MatchRequest matchRequest = new MatchRequest(team1ID, team2ID, scoreTeam1, scoreTeam2, matchDateFormatted);
 
-            // Send the request
+            // Create MatchRequest object
             Call<InsertMatchResponse> call = apiService.insertMatch(matchRequest);
             call.enqueue(new Callback<InsertMatchResponse>() {
                 @Override
                 public void onResponse(Call<InsertMatchResponse> call, Response<InsertMatchResponse> response) {
                     if (response.isSuccessful()) {
-                        InsertMatchResponse insertMatchResponse = response.body();
-                        if (insertMatchResponse != null) {
-                            Toast.makeText(getContext(), insertMatchResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "Unknown error occurred", Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(getContext(), "Match inserted successfully", Toast.LENGTH_SHORT).show();
                         dismiss(); // Close the dialog
-                        // Notify the main activity to refresh the match list
-                        if (getActivity() instanceof MainActivity) {
-                            ((MainActivity) getActivity()).fetchTodayMatches();
+                        if (onMatchAddedListener != null) {
+                            onMatchAddedListener.onMatchAdded();
                         }
                     } else {
                         Toast.makeText(getContext(), "Failed to insert match. Status code: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -108,13 +114,14 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
                 @Override
                 public void onFailure(Call<InsertMatchResponse> call, Throwable t) {
                     Toast.makeText(getContext(), "Request failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    t.printStackTrace();
                 }
             });
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
     private String validateAndFormatDate(String dateInput) {
         try {

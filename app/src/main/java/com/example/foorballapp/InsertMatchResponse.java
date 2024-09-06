@@ -5,15 +5,22 @@ import com.google.gson.annotations.SerializedName;
 public class InsertMatchResponse {
     @SerializedName("status")
     private String status;
+
     @SerializedName("message")
     private String message;
-    // Constructor
+
+    @SerializedName("matchId") // Ensure this matches the JSON field name
+    private int matchId; // or Integer if it can be null
+
+    // No-arg constructor
     public InsertMatchResponse() {
     }
 
-    public InsertMatchResponse(String status, String message) {
+    // Parameterized constructor
+    public InsertMatchResponse(String status, String message, int matchId) {
         this.status = status;
         this.message = message;
+        this.matchId = matchId;
     }
 
     // Getter for status
@@ -36,11 +43,22 @@ public class InsertMatchResponse {
         this.message = message;
     }
 
+    // Getter for matchId
+    public int getMatchId() {
+        return matchId;
+    }
+
+    // Setter for matchId
+    public void setMatchId(int matchId) {
+        this.matchId = matchId;
+    }
+
     @Override
     public String toString() {
         return "InsertMatchResponse{" +
                 "status='" + status + '\'' +
                 ", message='" + message + '\'' +
+                ", matchId=" + matchId +
                 '}';
     }
 }

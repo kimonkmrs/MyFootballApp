@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +14,19 @@ import java.util.List;
 public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHolder> {
 
     private List<Match> matchList;
+    private OnItemClickListener onItemClickListener;
+    private boolean isAdmin; // Add the isAdmin flag
 
-    public MatchAdapter(List<Match> matchList) {
+    // Define the interface for the click listener
+    public interface OnItemClickListener {
+        void onItemClick(Match match);
+    }
+
+    // Constructor that takes the list of matches, the click listener, and the isAdmin flag
+    public MatchAdapter(List<Match> matchList, OnItemClickListener onItemClickListener, boolean isAdmin) {
         this.matchList = matchList;
+        this.onItemClickListener = onItemClickListener;
+        this.isAdmin = isAdmin; // Initialize the isAdmin flag
     }
 
     @NonNull
@@ -34,6 +45,15 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         holder.team1Score.setText(String.valueOf(match.getScoreTeam1()));
         holder.team2Score.setText(String.valueOf(match.getScoreTeam2()));
         holder.matchTime.setText(match.getMatchDate());
+
+        // Bind the click listener based on isAdmin
+        holder.itemView.setOnClickListener(v -> {
+            if (isAdmin) {
+                onItemClickListener.onItemClick(match);
+            } else {
+                Toast.makeText(v.getContext(), "You are not authorized to click on this item.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -48,11 +68,11 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
     }
 
     public static class MatchViewHolder extends RecyclerView.ViewHolder {
-        TextView team1Name, team2Name, team1Score, team2Score, matchTime,matchId;
+        TextView team1Name, team2Name, team1Score, team2Score, matchTime, matchId;
 
         public MatchViewHolder(@NonNull View itemView) {
             super(itemView);
-            matchId=itemView.findViewById(R.id.matchId);
+            matchId = itemView.findViewById(R.id.matchId);
             team1Name = itemView.findViewById(R.id.team1Name);
             team2Name = itemView.findViewById(R.id.team2Name);
             team1Score = itemView.findViewById(R.id.team1Score);

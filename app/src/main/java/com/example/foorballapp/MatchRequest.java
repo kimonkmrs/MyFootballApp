@@ -1,22 +1,10 @@
 package com.example.foorballapp;
 
-import com.google.gson.annotations.SerializedName;
-
 public class MatchRequest {
-
-    @SerializedName("team1ID")
     private int team1ID;
-
-    @SerializedName("team2ID")
     private int team2ID;
-
-    @SerializedName("scoreTeam1")
     private int scoreTeam1;
-
-    @SerializedName("scoreTeam2")
     private int scoreTeam2;
-
-    @SerializedName("matchDate")
     private String matchDate;
 
     public MatchRequest(int team1ID, int team2ID, int scoreTeam1, int scoreTeam2, String matchDate) {
@@ -27,8 +15,6 @@ public class MatchRequest {
         this.matchDate = matchDate;
     }
 
-
-    // Getters and Setters
     public int getTeam1ID() {
         return team1ID;
     }

@@ -3,6 +3,7 @@ package com.example.foorballapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,7 +26,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AddMatchBottomSheetFragment.OnMatchAddedListener {
     private ImageView back, menu;
     private boolean isAdmin;
     private ApiService apiService;
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private List<Match> matchList = new ArrayList<>();
     private Button roundButtonPlus;
     private Button roundButtonMinus;
-    //private EditText editTextTeam1ID, editTextTeam2ID, editTextScoreTeam1, editTextScoreTeam2, editTextMatchDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +54,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewMatches);
         roundButtonPlus = findViewById(R.id.roundButtonPlus);
         roundButtonMinus = findViewById(R.id.roundButtonMinus);
-        //editTextTeam1ID = findViewById(R.id.editTextTeam1ID);
-        //editTextTeam2ID = findViewById(R.id.editTextTeam2ID);
-        //editTextScoreTeam1 = findViewById(R.id.editTextScoreTeam1);
-        //editTextScoreTeam2 = findViewById(R.id.editTextScoreTeam2);
-        //editTextMatchDate = findViewById(R.id.editTextMatchDate);
         noMatchesTextView = findViewById(R.id.noMatchesTextView);
 
         // Handle UI and functionality based on user role
@@ -75,7 +70,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        matchAdapter = new MatchAdapter(matchList);
+
+        matchAdapter = new MatchAdapter(matchList, match -> {
+            Intent intent = new Intent(MainActivity.this, PlayerListActivity.class);
+            intent.putExtra("team1Id", match.getTeam1ID());
+            intent.putExtra("team2Id", match.getTeam2ID());
+            intent.putExtra("team1Name", match.getTeam1Name()); // Pass the team name
+            intent.putExtra("team2Name", match.getTeam2Name()); // Pass the team name
+            startActivity(intent);
+        }, isAdmin);
+
         recyclerView.setAdapter(matchAdapter);
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -87,13 +91,17 @@ public class MainActivity extends AppCompatActivity {
         fetchTodayMatches();
     }
 
+    @Override
+    public void onMatchAdded() {
+        fetchTodayMatches(); // Refresh the match list
+    }
+
     private void showPopupMenu(View anchorView) {
         PopupMenu popupMenu = new PopupMenu(this, anchorView);
         popupMenu.getMenuInflater().inflate(R.menu.menus, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.menu_item_layout1) {
+            if (item.getItemId() == R.id.menu_item_layout1) {
                 Intent intent = new Intent(MainActivity.this, Login.class);
                 startActivity(intent);
                 return true;
@@ -103,10 +111,13 @@ public class MainActivity extends AppCompatActivity {
 
         popupMenu.show();
     }
+
     private void showAddMatchDialog() {
         AddMatchBottomSheetFragment bottomSheetFragment = new AddMatchBottomSheetFragment();
+        bottomSheetFragment.setOnMatchAddedListener(this);
         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
     }
+
     private void showRemoveMatchDialog() {
         RemoveMatchBottomSheetFragment removeMatchFragment = new RemoveMatchBottomSheetFragment();
         removeMatchFragment.show(getSupportFragmentManager(), removeMatchFragment.getTag());
@@ -151,6 +162,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

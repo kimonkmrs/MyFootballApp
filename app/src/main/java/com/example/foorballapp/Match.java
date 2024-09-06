@@ -21,6 +21,11 @@ public class Match {
 
     @SerializedName("MatchDate")
     private String matchDate;
+    @SerializedName("Team1ID")
+    private int team1ID;  // Add this field
+
+    @SerializedName("Team2ID")
+    private int team2ID;  // Add this field
 
     // Constructor
     public Match(int matchID, String team1Name, String team2Name, int scoreTeam1, int scoreTeam2, String matchDate) {
@@ -30,6 +35,8 @@ public class Match {
         this.scoreTeam1 = scoreTeam1;
         this.scoreTeam2 = scoreTeam2;
         this.matchDate = matchDate;
+        this.team1ID = team1ID;  // Initialize team1ID
+        this.team2ID = team2ID;  // Initialize team2ID
     }
 
     // Getters and Setters
@@ -45,4 +52,10 @@ public class Match {
     public void setScoreTeam2(int scoreTeam2) { this.scoreTeam2 = scoreTeam2; }
     public String getMatchDate() { return matchDate; }
     public void setMatchDate(String matchDate) { this.matchDate = matchDate; }
+    public int getTeam1ID() { return team1ID; }  // Getter for team1ID
+    public void setTeam1ID(int team1ID) { this.team1ID = team1ID; }  // Setter for team1ID
+
+    public int getTeam2ID() { return team2ID; }  // Getter for team2ID
+    public void setTeam2ID(int team2ID) { this.team2ID = team2ID; }  // Setter for team2ID
+
 }
