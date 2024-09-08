@@ -58,11 +58,11 @@ public class Register extends AppCompatActivity {
                     return;
                 }
                 if (password.length()<6){
-                    mEmail.setError("Weak Password.Password must be at least 6 characters long.");
+                    mPassword.setError("Weak Password.Password must be at least 6 characters long.");
                     return;
                 }
                 if (!password.equals(confirm_password)){
-                    mEmail.setError("Wrong Password. Try Again.");
+                    mConfirmPassword.setError("Wrong Password. Try Again.");
                     return;
                 }
                 progressBar.setVisibility(View.VISIBLE);

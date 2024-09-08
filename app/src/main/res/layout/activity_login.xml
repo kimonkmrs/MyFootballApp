@@ -102,7 +102,7 @@
         android:textColor="#F1EBEB"
         android:textSize="16sp"
         android:textStyle="bold|italic"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

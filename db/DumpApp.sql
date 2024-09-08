@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
 -- Host: localhost    Database: footballapp
@@ -183,3 +184,6 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-09-08 16:56:47
+=======
+The db
+>>>>>>> 28afbcb0ba063b7acb686d96c02566f2114eecee
