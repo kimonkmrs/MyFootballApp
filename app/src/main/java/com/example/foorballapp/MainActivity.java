@@ -105,6 +105,11 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
                 Intent intent = new Intent(MainActivity.this, Login.class);
                 startActivity(intent);
                 return true;
+            } else if (item.getItemId() == R.id.menu_item_standings) {
+                Intent intent = new Intent(MainActivity.this, StandingsActivity.class);
+                startActivity(intent);
+                return true;
+
             }
             return false;
         });

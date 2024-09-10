@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -131,6 +132,7 @@ public class PlayerListActivity extends AppCompatActivity {
 
                                     // Insert player into the match
                                     if (selectedMatchID != -1) {
+                                        Log.d("PlayerListActivity", "Inserting player ID: " + selectedPlayer.getPlayerID() + " into match ID: " + selectedMatchID);
                                         insertPlayerToMatch(selectedPlayer.getPlayerID(), selectedMatchID);
                                     }
                                 }
@@ -165,7 +167,7 @@ public class PlayerListActivity extends AppCompatActivity {
     }
 
     private void insertPlayerToMatch(int playerId, int matchId) {
-        // Create PlayerMatchRequest object to pass in the API call
+        // Create PlayerMatchRequest object
         PlayerMatchRequest matchRequest = new PlayerMatchRequest(matchId);
 
         Call<Void> call = apiService.assignMatchToPlayer(playerId, matchRequest);
@@ -174,16 +176,20 @@ public class PlayerListActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d("PlayerListActivity", "Player successfully inserted into match.");
+                    // Handle success case, e.g., show a Toast
+                    Toast.makeText(PlayerListActivity.this, "Player successfully inserted into match.", Toast.LENGTH_SHORT).show();
                 } else {
+                    // Log error or handle specific status codes
                     Log.e("PlayerListActivity", "Failed to insert player into match: " + response.message());
+                    Toast.makeText(PlayerListActivity.this, "Failed to insert player into match: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("PlayerListActivity", "Network error: " + t.getMessage());
+                Toast.makeText(PlayerListActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 }

@@ -13,9 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foorballapp.api.ApiService;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.List;
 
 import retrofit2.Call;
@@ -63,12 +60,12 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         playerList.remove(player);
         notifyDataSetChanged(); // Notify adapter about data change
         if (matchId != -1) {
-            removePlayerMatchId(player.getPlayerID());
+            Log.d("PlayerDetailsAdapter", "Removing player ID: " + player.getPlayerID() + " from match ID: " + matchId);
+            removePlayerFromMatch(player.getPlayerID());
         }
     }
 
-
-    private void removePlayerMatchId(int playerId) {
+    private void removePlayerFromMatch(int playerId) {
         // Create PlayerRemoveRequest object to pass in the API call
         PlayerRemoveRequest removeRequest = new PlayerRemoveRequest(matchId);
 
@@ -78,18 +75,20 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d("PlayerDetailsAdapter", "Player removed from match.");
+                    Toast.makeText(context, "Player removed from match.", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.e("PlayerDetailsAdapter", "Failed to remove player from match: " + response.message());
+                    Toast.makeText(context, "Failed to remove player from match.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("PlayerDetailsAdapter", "Network error: " + t.getMessage());
+                Toast.makeText(context, "Network error. Please try again.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
         TextView playerNameTextView;
@@ -100,4 +99,3 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         }
     }
 }
-
