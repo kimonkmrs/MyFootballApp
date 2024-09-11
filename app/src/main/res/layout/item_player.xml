@@ -1,23 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp">
 
+    <!-- Player Name -->
     <TextView
         android:id="@+id/playerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:textStyle="bold"/>
-    <ImageView
-        android:id="@+id/removePlayerIcon"
+
+    <!-- Icons and EditTexts Section -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_delete"
-        android:contentDescription="Remove player" />
+        android:orientation="horizontal">
 
+        <!-- Remove Icon -->
+        <ImageView
+            android:id="@+id/removePlayerIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_delete"
+            android:contentDescription="Remove player"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Icon 1 and EditText -->
+        <ImageView
+            android:id="@+id/goal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_sports_soccer_24"
+            android:contentDescription="Icon 1" />
+
+        <EditText
+            android:id="@+id/goals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="14dp"
+            android:hint="Goals"
+            android:inputType="text"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <!-- Icon 2 and EditText -->
+
+
+        <EditText
+            android:id="@+id/yellows"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="14dp"
+            android:hint="Yellow cards"
+            android:inputType="text"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <!-- Icon 3 and EditText -->
+
+
+        <EditText
+            android:id="@+id/reds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="14dp"
+            android:hint="Red cards"
+            android:inputType="text"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </LinearLayout>
 
     <!-- Add other TextViews for additional player details if needed -->
+
 </LinearLayout>

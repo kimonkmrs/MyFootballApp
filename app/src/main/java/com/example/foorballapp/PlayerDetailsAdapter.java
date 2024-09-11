@@ -1,10 +1,12 @@
 package com.example.foorballapp;
 
 import android.content.Context;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +50,40 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         // Set the click listener for the remove icon
         holder.removeIcon.setOnClickListener(v -> {
             removePlayer(player);
+        });
+        // Add TextWatchers for goals, yellow cards, and red cards
+        // Add TextWatchers for goals, yellow cards, and red cards
+        holder.goalsEditText.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String goalsText = s.toString();
+                int goals = goalsText.isEmpty() ? 0 : Integer.parseInt(goalsText);
+                updatePlayerStat(player.getPlayerID(), "goals", goals);
+            }
+        });
+
+        holder.yellowCardsEditText.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                String yellowCardsText = s.toString();
+                int yellowCards = yellowCardsText.isEmpty() ? 0 : Integer.parseInt(yellowCardsText);
+                updatePlayerStat(player.getPlayerID(), "yellowCards", yellowCards);
+            }
+        });
+
+        holder.redCardsEditText.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                String redCardsText = s.toString();
+                int redCards = redCardsText.isEmpty() ? 0 : Integer.parseInt(redCardsText);
+                updatePlayerStat(player.getPlayerID(), "redCards", redCards);
+            }
         });
     }
 
@@ -95,16 +131,53 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             }
         });
     }
+    public void updatePlayerStat(int playerId, String statType, int value) {
+        // Basic input validation
+        if (value < 0) {
+            Log.e("PlayerDetailsAdapter", "Invalid stat value: " + value);
+            return;
+        }
+
+        Call<Void> call = apiService.updatePlayerStat(playerId, statType, value);
+
+        Log.d("PlayerDetailsAdapter", "Updating player stat: playerId=" + playerId + ", statType=" + statType + ", value=" + value);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("PlayerDetailsAdapter", "Player stats updated successfully.");
+                    Toast.makeText(context, "Player stats updated.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("PlayerDetailsAdapter", "Failed to update player stats. Code: " + response.code() + " - Message: " + response.message());
+                    Toast.makeText(context, "Failed to update player stats. Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("PlayerDetailsAdapter", "Network error: " + t.getMessage());
+                Toast.makeText(context, "Network error. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
 
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
         TextView playerNameTextView;
         ImageView removeIcon; // Add this for the remove icon
+        EditText goalsEditText;
+        EditText yellowCardsEditText;
+        EditText redCardsEditText;
 
         public PlayerViewHolder(@NonNull View itemView) {
             super(itemView);
             playerNameTextView = itemView.findViewById(R.id.playerName);
             removeIcon = itemView.findViewById(R.id.removePlayerIcon); // Initialize the remove icon
+            goalsEditText = itemView.findViewById(R.id.goals);
+            yellowCardsEditText = itemView.findViewById(R.id.yellows);
+            redCardsEditText = itemView.findViewById(R.id.reds);
         }
     }
 }
