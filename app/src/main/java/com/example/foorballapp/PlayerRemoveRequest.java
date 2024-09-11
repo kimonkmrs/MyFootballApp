@@ -1,6 +1,9 @@
 package com.example.foorballapp;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PlayerRemoveRequest {
+    @SerializedName("MatchId")
     private int matchId;
 
     public PlayerRemoveRequest(int matchId) {
@@ -15,3 +18,4 @@ public class PlayerRemoveRequest {
         this.matchId = matchId;
     }
 }
+

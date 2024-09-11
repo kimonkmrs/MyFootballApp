@@ -38,7 +38,7 @@ public class PlayerListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
-
+        //selectedMatchID = getIntent().getIntExtra("matchId", -1); // Add matchId here
         // Retrofit setup
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:3000/")
@@ -82,7 +82,7 @@ public class PlayerListActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchPlayersForTeam(int teamId, Spinner spinner, List<Player> playerList, PlayerDetailsAdapter adapter) {
+    public void fetchPlayersForTeam(int teamId, Spinner spinner, List<Player> playerList, PlayerDetailsAdapter adapter) {
         Call<List<Player>> call = apiService.getPlayersByTeamId(teamId);
         call.enqueue(new Callback<List<Player>>() {
             @Override
@@ -166,22 +166,21 @@ public class PlayerListActivity extends AppCompatActivity {
         });
     }
 
-    private void insertPlayerToMatch(int playerId, int matchId) {
-        // Create PlayerMatchRequest object
-        PlayerMatchRequest matchRequest = new PlayerMatchRequest(matchId);
 
-        Call<Void> call = apiService.assignMatchToPlayer(playerId, matchRequest);
+
+    private void insertPlayerToMatch(int playerId, int matchId) {
+        PlayerMatchRequest matchRequest = new PlayerMatchRequest(playerId, matchId);
+
+        Call<Void> call = apiService.assignMatchToPlayer(matchRequest);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d("PlayerListActivity", "Player successfully inserted into match.");
-                    // Handle success case, e.g., show a Toast
                     Toast.makeText(PlayerListActivity.this, "Player successfully inserted into match.", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Log error or handle specific status codes
                     Log.e("PlayerListActivity", "Failed to insert player into match: " + response.message());
-                    Toast.makeText(PlayerListActivity.this, "Failed to insert player into match: " + response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlayerListActivity.this, "Failed to insert player into match.", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -192,4 +191,6 @@ public class PlayerListActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

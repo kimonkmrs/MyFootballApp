@@ -35,13 +35,15 @@ public interface ApiService {
     @GET("playersByTeam") // Updated endpoint to fetch players by team ID
     Call<List<Player>> getPlayersByTeamId(@Query("teamId") int teamId);
 
-    @POST("/players/{playerId}/assignMatch")
-    Call<Void> assignMatchToPlayer(@Path("playerId") int playerId, @Body PlayerMatchRequest matchRequest);
+    @POST("players/assignMatch")
+    Call<Void> assignMatchToPlayer(@Body PlayerMatchRequest matchRequest);
 
 
 
-    @POST("players/{playerId}/removeMatch")
-    Call<Void> removeMatchFromPlayer(@Path("playerId") int playerId, @Body PlayerRemoveRequest removeRequest);
+    @DELETE("players/{playerId}/removeMatch")
+    Call<Void> removePlayerFromMatch(@Path("playerId") int playerId, @Query("matchId") int matchId);
+
+
 
 
 

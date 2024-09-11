@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
             intent.putExtra("team2Id", match.getTeam2ID());
             intent.putExtra("team1Name", match.getTeam1Name()); // Pass the team name
             intent.putExtra("team2Name", match.getTeam2Name()); // Pass the team name
+            intent.putExtra("matchId", match.getMatchID()); // Pass match ID as well
             startActivity(intent);
         }, isAdmin);
 

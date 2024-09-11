@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,11 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
         Player player = playerList.get(position);
         holder.playerNameTextView.setText(player.getPlayerName());
-        holder.itemView.setOnClickListener(v -> removePlayer(player));
+
+        // Set the click listener for the remove icon
+        holder.removeIcon.setOnClickListener(v -> {
+            removePlayer(player);
+        });
     }
 
     @Override
@@ -57,19 +62,20 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     }
 
     public void removePlayer(Player player) {
-        playerList.remove(player);
-        notifyDataSetChanged(); // Notify adapter about data change
+        int position = playerList.indexOf(player);
+        if (position != -1) {
+            playerList.remove(position);
+            notifyItemRemoved(position); // Notify adapter about data change at a specific position
+        }
         if (matchId != -1) {
             Log.d("PlayerDetailsAdapter", "Removing player ID: " + player.getPlayerID() + " from match ID: " + matchId);
             removePlayerFromMatch(player.getPlayerID());
         }
     }
 
-    private void removePlayerFromMatch(int playerId) {
-        // Create PlayerRemoveRequest object to pass in the API call
-        PlayerRemoveRequest removeRequest = new PlayerRemoveRequest(matchId);
+    public void removePlayerFromMatch(int playerId) {
+        Call<Void> call = apiService.removePlayerFromMatch(playerId, matchId); // playerId as Path, matchId as Query
 
-        Call<Void> call = apiService.removeMatchFromPlayer(playerId, removeRequest);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -90,12 +96,15 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         });
     }
 
+
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
         TextView playerNameTextView;
+        ImageView removeIcon; // Add this for the remove icon
 
         public PlayerViewHolder(@NonNull View itemView) {
             super(itemView);
             playerNameTextView = itemView.findViewById(R.id.playerName);
+            removeIcon = itemView.findViewById(R.id.removePlayerIcon); // Initialize the remove icon
         }
     }
 }
