@@ -39,7 +39,8 @@ public interface ApiService {
 
     @POST("players/assignMatch")
     Call<Void> assignMatchToPlayer(@Body PlayerMatchRequest matchRequest);
-
+    @PATCH("/matches/{id}/updateScoresFromPlayers")
+    Call<Void> updateScoresFromPlayers(@Path("id") int matchId);
 
 
     @DELETE("players/{playerId}/removeMatch")

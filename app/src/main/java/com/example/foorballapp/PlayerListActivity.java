@@ -34,11 +34,12 @@ public class PlayerListActivity extends AppCompatActivity {
     private ApiService apiService;
     private int selectedMatchID;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
-        //selectedMatchID = getIntent().getIntExtra("matchId", -1); // Add matchId here
+
         // Retrofit setup
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:3000/")
@@ -47,15 +48,11 @@ public class PlayerListActivity extends AppCompatActivity {
         apiService = retrofit.create(ApiService.class);
 
         // Get match ID from intent
-        selectedMatchID = getIntent().getIntExtra("matchId", -1); // Auto-incremented matchId
+        selectedMatchID = getIntent().getIntExtra("matchId", -1);
         int team1Id = getIntent().getIntExtra("team1Id", -1);
         int team2Id = getIntent().getIntExtra("team2Id", -1);
         String team1Name = getIntent().getStringExtra("team1Name");
         String team2Name = getIntent().getStringExtra("team2Name");
-
-        // Initialize adapters
-        adapterTeam1 = new PlayerDetailsAdapter(this, playersTeam1, selectedMatchID, apiService);
-        adapterTeam2 = new PlayerDetailsAdapter(this, playersTeam2, selectedMatchID, apiService);
 
         // Initialize views
         spinnerTeam1 = findViewById(R.id.spinnerTeam1);
@@ -65,6 +62,9 @@ public class PlayerListActivity extends AppCompatActivity {
 
         recyclerViewTeam1.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewTeam2.setLayoutManager(new LinearLayoutManager(this));
+
+        adapterTeam1 = new PlayerDetailsAdapter(this, playersTeam1, selectedMatchID, apiService);
+        adapterTeam2 = new PlayerDetailsAdapter(this, playersTeam2, selectedMatchID, apiService);
 
         recyclerViewTeam1.setAdapter(adapterTeam1);
         recyclerViewTeam2.setAdapter(adapterTeam2);
@@ -82,7 +82,7 @@ public class PlayerListActivity extends AppCompatActivity {
         }
     }
 
-    public void fetchPlayersForTeam(int teamId, Spinner spinner, List<Player> playerList, PlayerDetailsAdapter adapter) {
+    private void fetchPlayersForTeam(int teamId, Spinner spinner, List<Player> playerList, PlayerDetailsAdapter adapter) {
         Call<List<Player>> call = apiService.getPlayersByTeamId(teamId);
         call.enqueue(new Callback<List<Player>>() {
             @Override
@@ -166,8 +166,6 @@ public class PlayerListActivity extends AppCompatActivity {
         });
     }
 
-
-
     private void insertPlayerToMatch(int playerId, int matchId) {
         PlayerMatchRequest matchRequest = new PlayerMatchRequest(playerId, matchId);
 
@@ -178,6 +176,7 @@ public class PlayerListActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d("PlayerListActivity", "Player successfully inserted into match.");
                     Toast.makeText(PlayerListActivity.this, "Player successfully inserted into match.", Toast.LENGTH_SHORT).show();
+
                 } else {
                     Log.e("PlayerListActivity", "Failed to insert player into match: " + response.message());
                     Toast.makeText(PlayerListActivity.this, "Failed to insert player into match.", Toast.LENGTH_SHORT).show();
@@ -190,6 +189,10 @@ public class PlayerListActivity extends AppCompatActivity {
                 Toast.makeText(PlayerListActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    // Inside PlayerListActivity
+    public interface OnScoreUpdatedListener {
+        void onScoreUpdated();
     }
 
 

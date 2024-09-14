@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
         fetchTodayMatches(); // Refresh the match list
     }
 
+
+
+
     private void showPopupMenu(View anchorView) {
         PopupMenu popupMenu = new PopupMenu(this, anchorView);
         popupMenu.getMenuInflater().inflate(R.menu.menus, popupMenu.getMenu());

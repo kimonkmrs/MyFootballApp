@@ -27,12 +27,16 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     private int matchId;
     private ApiService apiService;
     private Context context;
+    public interface ScoreUpdateListener {
+        void onScoreUpdated();
+    }
 
     public PlayerDetailsAdapter(Context context, List<Player> playerList, int matchId, ApiService apiService) {
         this.context = context;
         this.playerList = playerList;
         this.matchId = matchId;
         this.apiService = apiService;
+
     }
 
     @NonNull
@@ -132,7 +136,6 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         });
     }
     public void updatePlayerStat(int playerId, String statType, int value) {
-        // Basic input validation
         if (value < 0) {
             Log.e("PlayerDetailsAdapter", "Invalid stat value: " + value);
             return;
@@ -148,6 +151,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
                 if (response.isSuccessful()) {
                     Log.d("PlayerDetailsAdapter", "Player stats updated successfully.");
                     Toast.makeText(context, "Player stats updated.", Toast.LENGTH_SHORT).show();
+                    updateMatchScores();
                 } else {
                     Log.e("PlayerDetailsAdapter", "Failed to update player stats. Code: " + response.code() + " - Message: " + response.message());
                     Toast.makeText(context, "Failed to update player stats. Error: " + response.message(), Toast.LENGTH_SHORT).show();
@@ -162,6 +166,30 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         });
     }
 
+    // Method to call the API for score update and notify listener
+    public void updateMatchScores() {
+        Call<Void> call = apiService.updateScoresFromPlayers(matchId);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("PlayerDetailsAdapter", "Match scores updated successfully.");
+                    Toast.makeText(context, "Match scores updated.", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Log.e("PlayerDetailsAdapter", "Failed to update match scores. Code: " + response.code() + " - Message: " + response.message());
+                    Toast.makeText(context, "Failed to update match scores. Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("PlayerDetailsAdapter", "Network error: " + t.getMessage());
+                Toast.makeText(context, "Network error. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
