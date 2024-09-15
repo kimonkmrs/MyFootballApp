@@ -96,6 +96,22 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
     public void onMatchAdded() {
         fetchTodayMatches(); // Refresh the match list
     }
+    // New method to remove a match from the list and notify the adapter
+    public void removeMatchFromList(int matchID) {
+        for (int i = 0; i < matchList.size(); i++) {
+            if (matchList.get(i).getMatchID() == matchID) {
+                matchList.remove(i);
+                matchAdapter.notifyItemRemoved(i);  // Notify adapter to remove item from the RecyclerView
+                break;
+            }
+        }
+
+        // Check if the match list is empty after removal
+        if (matchList.isEmpty()) {
+            noMatchesTextView.setVisibility(View.VISIBLE); // Show "no matches" message
+        }
+    }
+
 
 
 

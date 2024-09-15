@@ -52,10 +52,8 @@ public class RemoveMatchBottomSheetFragment extends BottomSheetDialogFragment {
 
     private void deleteMatch() {
         try {
-            // Retrieve input value
             int matchID = Integer.parseInt(editTextMatchID.getText().toString());
 
-            // Send the request
             Call<DeleteMatchResponse> call = apiService.deleteMatch(matchID);
             call.enqueue(new Callback<DeleteMatchResponse>() {
                 @Override
@@ -67,10 +65,13 @@ public class RemoveMatchBottomSheetFragment extends BottomSheetDialogFragment {
                         } else {
                             Toast.makeText(getContext(), "Unknown error occurred", Toast.LENGTH_SHORT).show();
                         }
-                        dismiss(); // Close the dialog
-                        // Notify the main activity to refresh the match list
+
+                        // Dismiss the dialog
+                        dismiss();
+
+                        // Notify MainActivity to remove the match from the list
                         if (getActivity() instanceof MainActivity) {
-                            ((MainActivity) getActivity()).fetchTodayMatches();
+                            ((MainActivity) getActivity()).removeMatchFromList(matchID);
                         }
                     } else {
                         Toast.makeText(getContext(), "Failed to delete match. Status code: " + response.code(), Toast.LENGTH_SHORT).show();
