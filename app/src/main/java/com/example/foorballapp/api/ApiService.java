@@ -8,6 +8,7 @@ import com.example.foorballapp.MatchRequest;
 import com.example.foorballapp.Player;
 import com.example.foorballapp.PlayerMatchRequest;
 import com.example.foorballapp.PlayerRemoveRequest;
+import com.example.foorballapp.PlayerRequest;
 import com.example.foorballapp.Standing;
 
 import org.json.JSONObject;
@@ -54,7 +55,8 @@ public interface ApiService {
     );
 
 
-
+    @POST("/players/add")
+    Call<Void> addPlayer(@Body PlayerRequest playerRequest);
 
     @GET("/standings/general")
     Call<List<Standing>> getGeneralStandings(); // General Table

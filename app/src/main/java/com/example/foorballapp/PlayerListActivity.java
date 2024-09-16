@@ -1,10 +1,12 @@
 package com.example.foorballapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,8 +35,11 @@ public class PlayerListActivity extends AppCompatActivity {
     private List<Player> playersTeam2 = new ArrayList<>();
     private ApiService apiService;
     private int selectedMatchID;
+    private Button buttonAddPlayerTeam1;
+    private Button buttonAddPlayerTeam2;
 
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +67,12 @@ public class PlayerListActivity extends AppCompatActivity {
 
         recyclerViewTeam1.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewTeam2.setLayoutManager(new LinearLayoutManager(this));
+        buttonAddPlayerTeam1 = findViewById(R.id.roundButtonPlus1);
+        buttonAddPlayerTeam2 = findViewById(R.id.roundButtonPlus2);
+
+        buttonAddPlayerTeam1.setOnClickListener(v -> showAddPlayerDialog(team1Id));  // Use team1Id from intent
+        buttonAddPlayerTeam2.setOnClickListener(v -> showAddPlayerDialog(team2Id));  // Use team2Id from intent
+        // Assuming TeamID 2 for example
 
         adapterTeam1 = new PlayerDetailsAdapter(this, playersTeam1, selectedMatchID, apiService);
         adapterTeam2 = new PlayerDetailsAdapter(this, playersTeam2, selectedMatchID, apiService);
@@ -164,6 +175,10 @@ public class PlayerListActivity extends AppCompatActivity {
                 spinner.setSelection(0);
             }
         });
+    }
+    public void showAddPlayerDialog(int teamID) {
+        AddPlayerDialogFragment dialog = new AddPlayerDialogFragment(teamID);
+        dialog.show(getSupportFragmentManager(), "AddPlayerDialogFragment");
     }
 
     private void insertPlayerToMatch(int playerId, int matchId) {

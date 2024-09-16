@@ -25,12 +25,24 @@
         android:contentDescription="Select players for Team 1"
         android:minHeight="48dp" />
 
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTeam1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="16dp"/>
+    <Button
+        android:id="@+id/roundButtonPlus1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/baseline_add_circle_24"
+        android:textSize="24sp"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <TextView
         android:id="@+id/team2Label"
@@ -55,5 +67,16 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/roundButtonPlus2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/baseline_add_circle_24"
+        android:textSize="24sp"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </LinearLayout>
