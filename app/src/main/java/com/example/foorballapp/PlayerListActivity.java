@@ -177,7 +177,18 @@ public class PlayerListActivity extends AppCompatActivity {
         });
     }
     public void showAddPlayerDialog(int teamID) {
-        AddPlayerDialogFragment dialog = new AddPlayerDialogFragment(teamID);
+        // Pass a listener to refresh the player list after a player is added
+        AddPlayerDialogFragment dialog = new AddPlayerDialogFragment(teamID, new AddPlayerDialogFragment.OnPlayerAddedListener() {
+            @Override
+            public void onPlayerAdded() {
+                // Refresh the player list for the correct team
+                if (teamID == getIntent().getIntExtra("team1Id", -1)) {
+                    fetchPlayersForTeam(teamID, spinnerTeam1, playersTeam1, adapterTeam1);
+                } else if (teamID == getIntent().getIntExtra("team2Id", -1)) {
+                    fetchPlayersForTeam(teamID, spinnerTeam2, playersTeam2, adapterTeam2);
+                }
+            }
+        });
         dialog.show(getSupportFragmentManager(), "AddPlayerDialogFragment");
     }
 

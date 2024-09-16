@@ -29,9 +29,12 @@ public class AddPlayerDialogFragment extends DialogFragment {
 
     private ApiService apiService;
     private int teamID;
+    // Add a listener interface for callbacks
 
-    public AddPlayerDialogFragment(int teamID) {
-        this.teamID = teamID;  // Assign teamID when the dialog is created
+    private OnPlayerAddedListener listener;
+    public AddPlayerDialogFragment(int teamID, OnPlayerAddedListener listener) {
+        this.teamID = teamID;
+        this.listener = listener;
     }
 
     @Nullable
@@ -83,6 +86,10 @@ public class AddPlayerDialogFragment extends DialogFragment {
                     Log.d(TAG, "Player added successfully.");
                     Toast.makeText(getContext(), "Player added successfully", Toast.LENGTH_SHORT).show();
                     dismiss(); // Close the dialog
+                    // Notify the activity that the player was added
+                    if (listener != null) {
+                        listener.onPlayerAdded();
+                    }
                 } else {
                     // Log the error message and body
                     Log.e(TAG, "Failed to add player. Response code: " + response.code() + ", message: " + response.message());
@@ -102,5 +109,8 @@ public class AddPlayerDialogFragment extends DialogFragment {
                 Toast.makeText(getContext(), "Request failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    public interface OnPlayerAddedListener {
+        void onPlayerAdded();
     }
 }
