@@ -187,4 +187,19 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
             }
         });
     }
+    public void refreshMatchList() {
+        // Re-fetch the match list from the server
+        fetchTodayMatches();
+
+        // Notify the adapter to refresh the UI
+        matchAdapter.notifyDataSetChanged();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Fetch today's matches and refresh the UI when the activity is resumed
+        fetchTodayMatches();
+    }
+
+
 }

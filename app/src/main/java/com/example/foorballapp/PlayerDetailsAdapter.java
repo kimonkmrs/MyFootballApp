@@ -177,6 +177,10 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
                     Log.d("PlayerDetailsAdapter", "Match scores updated successfully.");
                     Toast.makeText(context, "Match scores updated.", Toast.LENGTH_SHORT).show();
 
+                    // Immediately update the UI in MainActivity
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).refreshMatchList(); // Custom method in MainActivity
+                    }
                 } else {
                     Log.e("PlayerDetailsAdapter", "Failed to update match scores. Code: " + response.code() + " - Message: " + response.message());
                     Toast.makeText(context, "Failed to update match scores. Error: " + response.message(), Toast.LENGTH_SHORT).show();
@@ -190,6 +194,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             }
         });
     }
+
 
 
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
