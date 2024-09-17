@@ -114,6 +114,8 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     }
 
     public void removePlayerFromMatch(int playerId) {
+        // First reset the player's stats to 0
+        resetPlayerStats(playerId);
         Call<Void> call = apiService.removePlayerFromMatch(playerId, matchId); // playerId as Path, matchId as Query
 
         call.enqueue(new Callback<Void>() {
@@ -122,6 +124,8 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
                 if (response.isSuccessful()) {
                     Log.d("PlayerDetailsAdapter", "Player removed from match.");
                     Toast.makeText(context, "Player removed from match.", Toast.LENGTH_SHORT).show();
+                    //removePlayer(player);
+                    updateMatchScores();
                 } else {
                     Log.e("PlayerDetailsAdapter", "Failed to remove player from match: " + response.message());
                     Toast.makeText(context, "Failed to remove player from match.", Toast.LENGTH_SHORT).show();
@@ -135,6 +139,12 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             }
         });
     }
+    public void resetPlayerStats(int playerId) {
+        updatePlayerStat(playerId, "goals", 0);
+        updatePlayerStat(playerId, "yellowCards", 0);
+        updatePlayerStat(playerId, "redCards", 0);
+    }
+
     public void updatePlayerStat(int playerId, String statType, int value) {
         if (value < 0) {
             Log.e("PlayerDetailsAdapter", "Invalid stat value: " + value);
