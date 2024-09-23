@@ -8,11 +8,13 @@ public class PlayerRequest {
 
 
     private String playerName;
+    private String playerPosition;
 
     // Constructor without PlayerID
-    public PlayerRequest(int teamID, String playerName) {
+    public PlayerRequest(int teamID, String playerName,String playerPosition) {
         this.teamID = teamID;
         this.playerName = playerName;
+        this.playerPosition=playerPosition;
     }
 
     // Getters
@@ -24,6 +26,10 @@ public class PlayerRequest {
         return playerName;
     }
 
+    public String getPlayerPosition() {
+        return playerPosition;
+    }
+
     // Setters
     public void setTeamID(int teamID) {
         this.teamID = teamID;
@@ -31,5 +37,9 @@ public class PlayerRequest {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    public void setPlayerPosition(String playerPosition) {
+        this.playerName = playerPosition;
     }
 }
