@@ -18,6 +18,8 @@
         <activity
             android:name=".StandingsActivity"
             android:exported="false" />
+        <activity android:name=".PlayerStatsActivity"
+            android:exported="false" />
         <activity
             android:name=".Register"
             android:exported="true"

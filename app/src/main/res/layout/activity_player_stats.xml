@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <include
+        android:id="@+id/headerLayout"
+        layout="@layout/header_player_stats" />  <!-- Ensure this layout exists -->
+
+    <TextView
+        android:id="@+id/noDataTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No player stats available"
+        android:visibility="gone"
+        android:textSize="16sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPlayerStats"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/noDataTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="No standings available"
+        android:textSize="16sp"
+        android:layout_gravity="center"/>
+</LinearLayout>

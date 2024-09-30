@@ -9,6 +9,7 @@ import com.example.foorballapp.Player;
 import com.example.foorballapp.PlayerMatchRequest;
 import com.example.foorballapp.PlayerRemoveRequest;
 import com.example.foorballapp.PlayerRequest;
+import com.example.foorballapp.PlayerStats;
 import com.example.foorballapp.Standing;
 
 import org.json.JSONObject;
@@ -60,6 +61,8 @@ public interface ApiService {
 
     @GET("/standings/general")
     Call<List<Standing>> getGeneralStandings(); // General Table
+    @GET("/api/playerstats")  // Define your API endpoint
+    Call<List<PlayerStats>> getPlayerStats();
 
     @GET("/standings/group/{groupName}")
     Call<List<Standing>> getStandingsByGroup(@Path("groupName") String groupName); // Specific group

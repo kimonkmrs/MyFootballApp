@@ -130,6 +130,11 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
                 startActivity(intent);
                 return true;
 
+            } else if (item.getItemId() == R.id.menu_item_players) {
+                Intent intent = new Intent(MainActivity.this, PlayerStatsActivity.class);
+                startActivity(intent);
+                return true;
+
             }
             return false;
         });

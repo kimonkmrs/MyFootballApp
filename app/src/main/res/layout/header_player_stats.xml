@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="0dp"
+    android:background="#DDDDDD">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Player Name"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Position"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Team Name"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="MP"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="W"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="D"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="L"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="GF"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="GA"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="0dp" />
+
+
+</LinearLayout>

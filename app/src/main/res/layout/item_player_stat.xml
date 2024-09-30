@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/playerNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Player Name" />
+
+    <TextView
+        android:id="@+id/positionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Position" />
+
+    <TextView
+        android:id="@+id/teamNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Team Name" />
+
+    <TextView
+        android:id="@+id/mpTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/winsTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/drawsTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/lossesTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/gfTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/gaTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0" />
+
+
+</LinearLayout>
