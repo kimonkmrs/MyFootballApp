@@ -64,7 +64,7 @@ public class StandingsActivity extends AppCompatActivity {
                     List<Group> groups = response.body();
                     if (groups != null && !groups.isEmpty()) {
                         groupNames.clear();
-                        groupNames.add("General Table");
+                        // Add only actual group names from the API
                         for (Group group : groups) {
                             Log.d("StandingsActivity", "Adding group: " + group.getGroupName());
                             groupNames.add(group.getGroupName());
@@ -83,37 +83,43 @@ public class StandingsActivity extends AppCompatActivity {
         });
     }
 
-
     private void populateSpinner() {
-        // Clear existing adapter
-        groupSpinner.setAdapter(null);
+        // Create a new list with "General Table" as the first default option
+        List<String> spinnerOptions = new ArrayList<>();
+        spinnerOptions.add("General Table"); // Add "General Table" as the default option
+        spinnerOptions.addAll(groupNames);   // Add the actual group names
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, groupNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerOptions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         groupSpinner.setAdapter(adapter);
+
+        // Set "General Table" as the default selection (position 0)
+        groupSpinner.setSelection(0);
     }
-
-
 
     private void setupSpinnerListener() {
         groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (position >= 0 && position < groupNames.size()) {
-                    selectedGroup = groupNames.get(position);
-                    fetchStandings(); // Fetch standings based on the selected group
+                // Set the selectedGroup based on the position selected
+                if (position == 0) {
+                    selectedGroup = "General Table"; // Default option
+                } else if (position > 0 && position <= groupNames.size()) {
+                    selectedGroup = groupNames.get(position - 1); // Adjust index due to "General Table"
                 } else {
                     Log.e("StandingsActivity", "Invalid position selected: " + position);
                     Toast.makeText(StandingsActivity.this, "Invalid selection", Toast.LENGTH_SHORT).show();
                 }
+                fetchStandings(); // Fetch standings based on the selected group
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // Default action if needed
+                // Default action if needed, "General Table" will be selected by default
             }
         });
     }
+
 
     private void fetchStandings() {
         Call<List<Standing>> call;

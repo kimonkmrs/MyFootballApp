@@ -11,6 +11,7 @@ import com.example.foorballapp.PlayerRemoveRequest;
 import com.example.foorballapp.PlayerRequest;
 import com.example.foorballapp.PlayerStats;
 import com.example.foorballapp.Standing;
+import com.example.foorballapp.Teams;
 
 import org.json.JSONObject;
 
@@ -69,6 +70,13 @@ public interface ApiService {
 
     @GET("/groups")
     Call<List<Group>> getGroups(); // Fetch team groups
+
+    @GET("/api/playerstats/byTeams/{teamName}")
+    Call<List<PlayerStats>> getPlayerStatsByTeams(@Path("teamName") String teamName);
+
+
+    @GET("/teams")
+    Call<List<Teams>> getTeamNames();  // API to get team names
 
 
 
