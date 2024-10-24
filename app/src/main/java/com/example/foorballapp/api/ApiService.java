@@ -55,6 +55,13 @@ public interface ApiService {
             @Field("statType") String statType,  // "goals", "yellowCards", or "redCards"
             @Field("value") int value
     );
+    @FormUrlEncoded
+    @POST("match/{matchId}/player/{playerId}/updatePosition")
+    Call<Void> updatePlayerPosition(
+            @Path("playerId") int playerId,
+            @Path("matchId") int matchId,
+            @Field("position") String position
+    );
 
 
     @POST("/players/add")

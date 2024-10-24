@@ -74,6 +74,15 @@
             tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
+    <EditText
+        android:id="@+id/playerPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="14dp"
+        android:hint="Player Position"
+        android:inputType="text"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <!-- Add other TextViews for additional player details if needed -->
 

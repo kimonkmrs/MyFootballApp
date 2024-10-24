@@ -89,6 +89,16 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
                 updatePlayerStat(player.getPlayerID(), "redCards", redCards);
             }
         });
+        // Listen for position updates
+        holder.playerPositionEditText.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                String positionText = s.toString();
+                if (!positionText.isEmpty()) {
+                    updatePlayerPosition(player.getPlayerID(), positionText);
+                }
+            }
+        });
     }
 
     @Override
@@ -111,6 +121,28 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             Log.d("PlayerDetailsAdapter", "Removing player ID: " + player.getPlayerID() + " from match ID: " + matchId);
             removePlayerFromMatch(player.getPlayerID());
         }
+    }
+    public void updatePlayerPosition(int playerId, String position) {
+        Call<Void> call = apiService.updatePlayerPosition(playerId,matchId, position);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("PlayerDetailsAdapter", "Player position updated successfully.");
+                    Toast.makeText(context, "Player position updated.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("PlayerDetailsAdapter", "Failed to update player position. Code: " + response.code());
+                    Toast.makeText(context, "Failed to update player position.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("PlayerDetailsAdapter", "Network error: " + t.getMessage());
+                Toast.makeText(context, "Network error. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void removePlayerFromMatch(int playerId) {
@@ -213,6 +245,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         EditText goalsEditText;
         EditText yellowCardsEditText;
         EditText redCardsEditText;
+        EditText playerPositionEditText;
 
         public PlayerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -221,6 +254,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             goalsEditText = itemView.findViewById(R.id.goals);
             yellowCardsEditText = itemView.findViewById(R.id.yellows);
             redCardsEditText = itemView.findViewById(R.id.reds);
+            playerPositionEditText = itemView.findViewById(R.id.playerPosition);
         }
     }
 }
