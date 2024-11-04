@@ -84,6 +84,13 @@
         android:inputType="text"
         tools:ignore="TouchTargetSizeCheck" />
 
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save" />
+
+
     <!-- Add other TextViews for additional player details if needed -->
 
 </LinearLayout>

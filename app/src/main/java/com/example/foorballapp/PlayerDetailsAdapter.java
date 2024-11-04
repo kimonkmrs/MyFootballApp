@@ -1,11 +1,13 @@
 package com.example.foorballapp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,55 +53,52 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         Player player = playerList.get(position);
         holder.playerNameTextView.setText(player.getPlayerName());
 
-        // Set the click listener for the remove icon
-        holder.removeIcon.setOnClickListener(v -> {
-            removePlayer(player);
-        });
-        // Add TextWatchers for goals, yellow cards, and red cards
-        // Add TextWatchers for goals, yellow cards, and red cards
-        holder.goalsEditText.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+        // Load saved stats from SharedPreferences
+        SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
+        int goals = sharedPreferences.getInt(player.getPlayerID() + "_goals", 0);
+        int yellowCards = sharedPreferences.getInt(player.getPlayerID() + "_yellowCards", 0);
+        int redCards = sharedPreferences.getInt(player.getPlayerID() + "_redCards", 0);
+        String playerPosition = sharedPreferences.getString(player.getPlayerID() + "_position", "");
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                String goalsText = s.toString();
-                int goals = goalsText.isEmpty() ? 0 : Integer.parseInt(goalsText);
-                updatePlayerStat(player.getPlayerID(), "goals", goals);
-            }
-        });
+        // Set loaded values into EditText fields
+        holder.goalsEditText.setText(String.valueOf(goals));
+        holder.yellowCardsEditText.setText(String.valueOf(yellowCards));
+        holder.redCardsEditText.setText(String.valueOf(redCards));
+        holder.playerPositionEditText.setText(playerPosition);
 
-        holder.yellowCardsEditText.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                String yellowCardsText = s.toString();
-                int yellowCards = yellowCardsText.isEmpty() ? 0 : Integer.parseInt(yellowCardsText);
-                updatePlayerStat(player.getPlayerID(), "yellowCards", yellowCards);
-            }
-        });
+        // Save stats only when save button is clicked
+        holder.saveButton.setOnClickListener(v -> {
+            // Retrieve the current values from EditText fields
+            int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
+            int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
+            int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
+            String updatedPosition = holder.playerPositionEditText.getText().toString();
 
-        holder.redCardsEditText.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                String redCardsText = s.toString();
-                int redCards = redCardsText.isEmpty() ? 0 : Integer.parseInt(redCardsText);
-                updatePlayerStat(player.getPlayerID(), "redCards", redCards);
-            }
-        });
-        // Listen for position updates
-        holder.playerPositionEditText.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                String positionText = s.toString();
-                if (!positionText.isEmpty()) {
-                    updatePlayerPosition(player.getPlayerID(), positionText);
-                }
-            }
+            // Save stats to SharedPreferences
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt(player.getPlayerID() + "_goals", updatedGoals);
+            editor.putInt(player.getPlayerID() + "_yellowCards", updatedYellowCards);
+            editor.putInt(player.getPlayerID() + "_redCards", updatedRedCards);
+            editor.putString(player.getPlayerID() + "_position", updatedPosition);
+            editor.apply();
+
+            // Optionally show confirmation
+            Toast.makeText(context, "Player stats saved locally.", Toast.LENGTH_SHORT).show();
+
+            // Update player stats in the database
+            updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
+            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
+            updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
+
+            // Update player position in the database
+            updatePlayerPosition(player.getPlayerID(), updatedPosition);
+
+            // Update match scores after all player stats are updated
+            updateMatchScores();
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -246,6 +245,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         EditText yellowCardsEditText;
         EditText redCardsEditText;
         EditText playerPositionEditText;
+        Button saveButton; // Add save button
 
         public PlayerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -255,6 +255,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             yellowCardsEditText = itemView.findViewById(R.id.yellows);
             redCardsEditText = itemView.findViewById(R.id.reds);
             playerPositionEditText = itemView.findViewById(R.id.playerPosition);
+            saveButton = itemView.findViewById(R.id.saveButton); // Initialize the save button
         }
     }
 }

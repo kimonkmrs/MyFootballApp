@@ -84,6 +84,8 @@ public class PlayerListActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.team1Label)).setText(team1Name != null ? team1Name : "Team 1");
         ((TextView) findViewById(R.id.team2Label)).setText(team2Name != null ? team2Name : "Team 2");
 
+
+
         // Fetch players for both teams
         if (team1Id != -1) {
             fetchPlayersForTeam(team1Id, spinnerTeam1, playersTeam1, adapterTeam1);
@@ -139,13 +141,16 @@ public class PlayerListActivity extends AppCompatActivity {
 
                                 if (selectedPlayer != null) {
                                     adapter.addPlayers(Collections.singletonList(selectedPlayer));
-                                    adapter.notifyDataSetChanged();
+                                    adapter.notifyItemInserted(adapter.getItemCount() - 1);
+
 
                                     // Insert player into the match
                                     if (selectedMatchID != -1) {
                                         Log.d("PlayerListActivity", "Inserting player ID: " + selectedPlayer.getPlayerID() + " into match ID: " + selectedMatchID);
                                         insertPlayerToMatch(selectedPlayer.getPlayerID(), selectedMatchID);
                                     }
+                                    // Reset the spinner back to "Select a player"
+                                    spinner.setSelection(0);
                                 }
                             }
                         }
@@ -220,6 +225,7 @@ public class PlayerListActivity extends AppCompatActivity {
     public interface OnScoreUpdatedListener {
         void onScoreUpdated();
     }
+
 
 
 }
