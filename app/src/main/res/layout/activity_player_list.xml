@@ -1,11 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_player_list"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    tools:context=".PlayerListActivity">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 
     <TextView
         android:id="@+id/team1Label"
@@ -15,7 +22,9 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:ignore="MissingConstraints" />
 
     <Spinner
         android:id="@+id/spinnerTeam1"
@@ -23,7 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:contentDescription="Select players for Team 1"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        app:layout_constraintTop_toBottomOf="@id/team1Label" />
 
 
 
@@ -32,17 +42,22 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/spinnerTeam1"
+        />
+
     <Button
         android:id="@+id/roundButtonPlus1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/baseline_add_circle_24"
         android:textSize="24sp"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        tools:ignore="DuplicateIds,SpeakableTextPresentCheck"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewTeam1"/>
 
     <TextView
         android:id="@+id/team2Label"
@@ -51,7 +66,9 @@
         android:text="Team 2 Players"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/roundButtonPlus1"
+        tools:ignore="MissingConstraints" />
 
     <Spinner
         android:id="@+id/spinnerTeam2"
@@ -59,24 +76,30 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:contentDescription="Select players for Team 2"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        app:layout_constraintTop_toBottomOf="@id/team2Label"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTeam2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/spinnerTeam2"/>
 
     <Button
         android:id="@+id/roundButtonPlus2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/baseline_add_circle_24"
         android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewTeam2"
         tools:ignore="SpeakableTextPresentCheck" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Toolbar at the top -->
+
+

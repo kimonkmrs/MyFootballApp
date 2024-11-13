@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FoorballApp</string>
+    <string name="app_name">MiniFootballStats</string>
     <string-array name="default_group_option">
         <item>General Table</item>
     </string-array>

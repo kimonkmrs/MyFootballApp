@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "935782645552",
     "project_id": "foorballapp",
-    "storage_bucket": "foorballapp.appspot.com"
+    "storage_bucket": "foorballapp.firebasestorage.app"
   },
   "client": [
     {
@@ -10,6 +10,44 @@
         "mobilesdk_app_id": "1:935782645552:android:d8be4d916438c95ca592f5",
         "android_client_info": {
           "package_name": "com.example.foorballapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgak-xvmGW5dUy5xs5u_3kF_fHP8j7X20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935782645552:android:42a4c26ec1c65d64a592f5",
+        "android_client_info": {
+          "package_name": "com.myapp.minifootballstats"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgak-xvmGW5dUy5xs5u_3kF_fHP8j7X20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935782645552:android:c4f0178383a9b11aa592f5",
+        "android_client_info": {
+          "package_name": "com.new.package.MiniFootballStats"
         }
       },
       "oauth_client": [],

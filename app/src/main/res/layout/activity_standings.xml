@@ -1,29 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    tools:context=".StandingsActivity">
 
+    <!-- Toolbar at the top -->
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Spinner positioned below toolbar -->
     <Spinner
         android:id="@+id/groupSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <!-- Header positioned below spinner -->
     <include
         android:id="@+id/headerLayout"
-        layout="@layout/item_standing_header" />
+        layout="@layout/item_standing_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/groupSpinner" />
 
-
-
+    <!-- RecyclerView positioned below header -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewStandings"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical" />
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
+    <!-- No data TextView centered in the layout -->
     <TextView
         android:id="@+id/noDataTextView"
         android:layout_width="wrap_content"
@@ -31,5 +48,9 @@
         android:visibility="gone"
         android:text="No standings available"
         android:textSize="16sp"
-        android:layout_gravity="center"/>
-</LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,10 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    tools:context=".PlayerStatsActivity">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/team_spinner"
@@ -12,26 +18,38 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:spinnerMode="dropdown"
-        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"/>
 
     <include
         android:id="@+id/headerLayout"
-        layout="@layout/header_player_stats" />  <!-- Ensure this layout exists -->
-
-    <TextView
-        android:id="@+id/noDataTextView"
-        android:layout_width="wrap_content"
+        layout="@layout/header_player_stats"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No player stats available"
-        android:visibility="gone"
-        android:textSize="16sp" />
-
+        app:layout_constraintTop_toBottomOf="@id/team_spinner"/>  <!-- Ensure this layout exists -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPlayerStats"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintBottom_toBottomOf="parent" />
+    <TextView
+        android:id="@+id/noDataTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="No players stats availiable"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
