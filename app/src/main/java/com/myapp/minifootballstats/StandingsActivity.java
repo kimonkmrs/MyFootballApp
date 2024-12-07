@@ -55,6 +55,10 @@ public class StandingsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         standingsAdapter = new StandingsAdapter(standingsList);
         recyclerView.setAdapter(standingsAdapter);
+        // Add grid divider decoration
+        int dividerSize = getResources().getDimensionPixelSize(R.dimen.divider_size);
+        recyclerView.addItemDecoration(new GridDividerDecoration(this, R.color.divider_color, dividerSize));
+
 
         Retrofit retrofit = NetworkClient.getRetrofitInstance();
         apiService = retrofit.create(ApiService.class);
@@ -173,11 +177,11 @@ public class StandingsActivity extends AppCompatActivity {
 
         popupMenu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.logout) {
-                Intent intent = new Intent(StandingsActivity.this, Login.class);
-                startActivity(intent);
+                SessionManager.logout(this);  // This clears session data and redirects to Login
                 return true;
             } else if (item.getItemId() == R.id.main_menu) {
                 Intent intent = new Intent(StandingsActivity.this, MainActivity.class);
+                intent.putExtra("refresh_data", true);
                 startActivity(intent);
                 return true;
 

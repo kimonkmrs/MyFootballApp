@@ -5,60 +5,90 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp">
+
+    <!-- Match ID - Not inside rectangular background -->
     <TextView
         android:id="@+id/matchId"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Match ID"
+        android:textStyle="bold"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/team1Name"
+    <!-- Container for match details inside a rectangular background -->
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Team 1"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/team1Score"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/matchId"/>
-
-    <TextView
-        android:id="@+id/team2Name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Team 2"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/team2Score"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/team1Name" />
-
-    <TextView
-        android:id="@+id/team1Score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/team1Name"
-        app:layout_constraintTop_toBottomOf="@+id/matchId" />
+        app:layout_constraintTop_toBottomOf="@id/matchId"
+        android:background="@drawable/rectangular_background"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/team2Score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/team1Score" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/matchTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="20:00"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/team2Name"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Team 1 Name -->
+        <TextView
+            android:id="@+id/team1Name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Team 1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/team1Score"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <!-- Team 1 Score -->
+        <TextView
+            android:id="@+id/team1Score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/team1Name"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Team 2 Name -->
+        <TextView
+            android:id="@+id/team2Name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Team 2"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/team2Score"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/team1Name"/>
+
+        <!-- Team 2 Score -->
+        <TextView
+            android:id="@+id/team2Score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/team1Score" />
+
+        <!-- Match Time -->
+        <TextView
+            android:id="@+id/matchTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20:00"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/team2Name"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>

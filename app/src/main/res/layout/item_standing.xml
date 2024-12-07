@@ -9,70 +9,72 @@
         android:id="@+id/positionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="1" />
+        android:layout_weight="0.65"
+        android:text="1"
+        android:layout_marginEnd="0.5dp"/>
 
     <TextView
         android:id="@+id/teamNameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="Team Name" />
+        android:layout_weight="2.5"
+        android:text="Team Name"
+        android:layout_marginEnd="2dp"/>
 
     <TextView
         android:id="@+id/mpTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
     <TextView
         android:id="@+id/winsTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
     <TextView
         android:id="@+id/drawsTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
     <TextView
         android:id="@+id/lossesTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
     <TextView
         android:id="@+id/gfTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
     <TextView
         android:id="@+id/gaTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
     <TextView
         android:id="@+id/gdTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
     <TextView
         android:id="@+id/pointsTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:text="0" />
 
 </LinearLayout>

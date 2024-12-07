@@ -238,12 +238,11 @@ public class PlayerListActivity extends AppCompatActivity {
     }
     private void showPopupMenu(View anchorView) {
         PopupMenu popupMenu = new PopupMenu(this, anchorView);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_standings, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.menu_players_activity, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.logout) {
-                Intent intent = new Intent(PlayerListActivity.this, Login.class);
-                startActivity(intent);
+                SessionManager.logout(this);  // This clears session data and redirects to Login
                 return true;
             } else if (item.getItemId() == R.id.main_menu) {
                 Intent intent = new Intent(PlayerListActivity.this, MainActivity.class);

@@ -48,7 +48,12 @@
             tools:ignore="TouchTargetSizeCheck" />
 
         <!-- Icon 2 and EditText -->
-
+        <ImageView
+            android:id="@+id/yellow_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_yellow_card"
+            android:contentDescription="Icon 1" />
 
         <EditText
             android:id="@+id/yellows"
@@ -61,7 +66,12 @@
             tools:ignore="TouchTargetSizeCheck" />
 
         <!-- Icon 3 and EditText -->
-
+        <ImageView
+            android:id="@+id/red_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_red_card"
+            android:contentDescription="Icon 1" />
 
         <EditText
             android:id="@+id/reds"

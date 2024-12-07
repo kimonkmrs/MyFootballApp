@@ -4,66 +4,106 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/pitch"
     tools:context=".MainActivity">
 
+    <!-- Toolbar -->
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMatches"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:alpha="0.7"
+        android:background="@color/white"
         android:clipToPadding="false"
         android:padding="16dp"
         android:scrollbars="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintBottom_toTopOf="@+id/roundButtonPlus"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <!-- TextView to show "No match today" -->
+    <!-- "No Match Today" TextView -->
+    <!-- "No Match Today" TextView -->
     <TextView
         android:id="@+id/noMatchesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="No match today"
         android:textSize="18sp"
+        android:textColor="@color/black"
         android:visibility="gone"
-        android:layout_gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintBottom_toTopOf="@+id/roundButtonPlus"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="@+id/recyclerViewMatches"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerViewMatches"
+        app:layout_constraintStart_toStartOf="@+id/recyclerViewMatches"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewMatches" />
+
     <!-- Round + Button -->
     <Button
         android:id="@+id/roundButtonPlus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/baseline_add_circle_24"
         android:textSize="24sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/roundButtonMinus"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/roundButtonMinus"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewMatches" />
+        tools:ignore="SpeakableTextPresentCheck" />
 
-    <!-- Round - Button Minus -->
+    <!-- Text Below the + Button -->
+    <TextView
+        android:id="@+id/addMatchDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="Add Match"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/roundButtonPlus"
+        app:layout_constraintStart_toStartOf="@+id/roundButtonPlus"
+        app:layout_constraintTop_toBottomOf="@+id/roundButtonPlus" />
+
+    <!-- Round - Button -->
+
+    <!-- Text Below the - Button -->
     <Button
         android:id="@+id/roundButtonMinus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/baseline_remove_circle_24"
         android:textSize="24sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/roundButtonPlus"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewMatches" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/removeMatchDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="Remove Match"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/roundButtonMinus"
+        app:layout_constraintStart_toStartOf="@+id/roundButtonMinus"
+        app:layout_constraintTop_toBottomOf="@+id/roundButtonMinus" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

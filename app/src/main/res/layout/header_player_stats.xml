@@ -1,91 +1,94 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="0dp"
+    android:padding="8dp"
     android:background="#DDDDDD">
 
+    <!-- Player Name: Matches row layout_weight -->
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2.5"
+        android:layout_marginStart="-2dp"
         android:text="Player Name"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
+    <!-- Position: Matches row layout_weight -->
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2.5"
         android:text="Position"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
+    <!-- Team Name: Matches row layout_weight -->
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:text="Team Name"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
+    <!-- Integer Stats: Compact space, centered -->
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
         android:text="MP"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
         android:text="W"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
         android:text="D"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
         android:text="L"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
         android:text="GF"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
+        android:padding="4dp" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
         android:text="GA"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="0dp" />
-
+        android:padding="4dp" />
 
 </LinearLayout>

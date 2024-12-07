@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -7,22 +8,26 @@
 
     <EditText
         android:id="@+id/editTextPlayerName"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Enter player name"
         android:inputType="text"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        tools:ignore="Suspicious0dp" />
+
     <EditText
         android:id="@+id/editTextPlayerPosition"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Enter player position"
         android:inputType="text"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        tools:ignore="Suspicious0dp" />
 
     <Button
         android:id="@+id/buttonAddPlayer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Player"/>
+        android:text="Add Player" />
 </LinearLayout>
+
