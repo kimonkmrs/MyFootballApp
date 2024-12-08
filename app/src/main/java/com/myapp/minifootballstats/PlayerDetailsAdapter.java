@@ -52,13 +52,12 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         Player player = playerList.get(position);
         holder.playerNameTextView.setText(player.getPlayerName());
 
-        // Load saved stats from SharedPreferences
+        // Use SharedPreferences keys scoped by matchId
         SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
-        int goals = sharedPreferences.getInt(player.getPlayerID() + "_goals", 0);
-        int yellowCards = sharedPreferences.getInt(player.getPlayerID() + "_yellowCards", 0);
-        int redCards = sharedPreferences.getInt(player.getPlayerID() + "_redCards", 0);
-        String playerPosition = sharedPreferences.getString(player.getPlayerID() + "_position", "");
-
+        int goals = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_goals", 0);
+        int yellowCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_yellowCards", 0);
+        int redCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_redCards", 0);
+        String playerPosition = sharedPreferences.getString(matchId + "_" + player.getPlayerID() + "_position", "");
 
         // Set loaded values into EditText fields
         holder.goalsEditText.setText(String.valueOf(goals));
@@ -74,16 +73,16 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
             String updatedPosition = holder.playerPositionEditText.getText().toString();
 
-            // Save stats to SharedPreferences
+            // Save stats to SharedPreferences with matchId
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(player.getPlayerID() + "_goals", updatedGoals);
-            editor.putInt(player.getPlayerID() + "_yellowCards", updatedYellowCards);
-            editor.putInt(player.getPlayerID() + "_redCards", updatedRedCards);
-            editor.putString(player.getPlayerID() + "_position", updatedPosition);
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
+            editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
             editor.apply();
 
             // Optionally show confirmation
-            Toast.makeText(context, "Player stats saved locally.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Player stats saved locally for this match.", Toast.LENGTH_SHORT).show();
 
             // Update player stats in the database
             updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
@@ -91,20 +90,17 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
 
             // Update player position in the database
-            updatePlayerPosition(player.getPlayerID(), updatedPosition);
+            updatePlayerPosition(player.getPlayerID(),matchId, updatedPosition);
 
             // Update match scores after all player stats are updated
             updateMatchScores();
-
-
-
         });
-        // Separate removeIcon click listener
+
         holder.removeIcon.setOnClickListener(view -> {
-            // Call the removePlayer method to handle both API and UI update
             removePlayer(player);
         });
     }
+
 
 
     @Override
@@ -128,7 +124,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             removePlayerFromMatch(player.getPlayerID());
         }
     }
-    public void updatePlayerPosition(int playerId, String position) {
+    public void updatePlayerPosition(int playerId,int matchId, String position) {
         Call<Void> call = apiService.updatePlayerPosition(playerId,matchId, position);
 
         call.enqueue(new Callback<Void>() {
@@ -189,15 +185,16 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             return;
         }
 
-        Call<Void> call = apiService.updatePlayerStat(playerId, statType, value);
+        // Include matchId in the API call
+        Call<Void> call = apiService.updatePlayerStat(playerId, statType, matchId, value);
 
-        Log.d("PlayerDetailsAdapter", "Updating player stat: playerId=" + playerId + ", statType=" + statType + ", value=" + value);
+        Log.d("PlayerDetailsAdapter", "Updating player stat: playerId=" + playerId + ", matchId=" + matchId + ", statType=" + statType + ", value=" + value);
 
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Log.d("PlayerDetailsAdapter", "Player stats updated successfully.");
+                    Log.d("PlayerDetailsAdapter", "Player stats updated successfully for matchId=" + matchId);
                     Toast.makeText(context, "Player stats updated.", Toast.LENGTH_SHORT).show();
                     updateMatchScores();
                 } else {
@@ -213,6 +210,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             }
         });
     }
+
 
     // Method to call the API for score update and notify listener
     public void updateMatchScores() {

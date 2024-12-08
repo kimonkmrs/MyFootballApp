@@ -45,19 +45,23 @@ public interface ApiService {
     @DELETE("players/{playerId}/removeMatch")
     Call<Void> removePlayerFromMatch(@Path("playerId") int playerId, @Query("matchId") int matchId);
     @FormUrlEncoded
-    @POST("updatePlayerStat")
+    @POST("match/{matchId}/player/{playerId}/updateStat")
     Call<Void> updatePlayerStat(
-            @Field("playerId") int playerId,
-            @Field("statType") String statType,  // "goals", "yellowCards", or "redCards"
-            @Field("value") int value
+
+            @Path("playerId") int playerId,     // Pass playerId as a path parameter
+            @Field("statType") String statType, // Pass statType as a form field
+            @Path("matchId") int matchId,       // Pass matchId as a path parameter
+            @Field("value") int value           // Pass stat value as a form field
     );
     @FormUrlEncoded
     @POST("match/{matchId}/player/{playerId}/updatePosition")
     Call<Void> updatePlayerPosition(
-            @Path("playerId") int playerId,
-            @Path("matchId") int matchId,
-            @Field("position") String position
+            @Path("playerId") int playerId,     // Pass playerId as a path parameter
+            @Path("matchId") int matchId,       // Pass matchId as a path parameter
+
+            @Field("position") String position  // Keep position as a field
     );
+
 
 
     @POST("/players/add")
