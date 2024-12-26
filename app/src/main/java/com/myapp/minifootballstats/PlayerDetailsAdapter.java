@@ -109,21 +109,24 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     }
 
     public void addPlayers(List<Player> newPlayers) {
-        playerList.addAll(newPlayers);
-        notifyDataSetChanged();
+        int initialSize = playerList.size(); // Get the current size of the list
+        playerList.addAll(newPlayers); // Add the new players
+        notifyItemRangeInserted(initialSize, newPlayers.size()); // Notify the adapter
     }
 
     public void removePlayer(Player player) {
         int position = playerList.indexOf(player);
         if (position != -1) {
             playerList.remove(position);
-            notifyItemRemoved(position); // Notify adapter about data change at a specific position
+            notifyItemRemoved(position); // Notify about the item removal
         }
+
         if (matchId != -1) {
             Log.d("PlayerDetailsAdapter", "Removing player ID: " + player.getPlayerID() + " from match ID: " + matchId);
             removePlayerFromMatch(player.getPlayerID());
         }
     }
+
     public void updatePlayerPosition(int playerId,int matchId, String position) {
         Call<Void> call = apiService.updatePlayerPosition(playerId,matchId, position);
 
