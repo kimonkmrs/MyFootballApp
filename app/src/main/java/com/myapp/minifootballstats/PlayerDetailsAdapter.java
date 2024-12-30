@@ -247,7 +247,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
 
 
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
-        TextView playerNameTextView;
+        TextView playerNameTextView,removePlayerText;
         ImageView removeIcon; // Add this for the remove icon
         EditText goalsEditText;
         EditText yellowCardsEditText;
@@ -258,6 +258,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         public PlayerViewHolder(@NonNull View itemView) {
             super(itemView);
             playerNameTextView = itemView.findViewById(R.id.playerName);
+            removePlayerText=itemView.findViewById(R.id.removePlayerText);
             removeIcon = itemView.findViewById(R.id.removePlayerIcon); // Initialize the remove icon
             goalsEditText = itemView.findViewById(R.id.goals);
             yellowCardsEditText = itemView.findViewById(R.id.yellows);

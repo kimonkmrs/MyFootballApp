@@ -3,15 +3,18 @@ package com.myapp.minifootballstats;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,7 +56,9 @@ public class StandingsActivity extends AppCompatActivity {
         groupSpinner = findViewById(R.id.groupSpinner);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        standingsAdapter = new StandingsAdapter(standingsList);
+
+        // Pass a click listener to the adapter
+        standingsAdapter = new StandingsAdapter(standingsList, this::showTeamDetailsDialog);
         recyclerView.setAdapter(standingsAdapter);
         // Add grid divider decoration
         int dividerSize = getResources().getDimensionPixelSize(R.dimen.divider_size);
@@ -133,6 +138,59 @@ public class StandingsActivity extends AppCompatActivity {
             }
         });
     }
+    private void showTeamDetailsDialog(Standing standing) {
+        // Inflate the custom dialog layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_team_details, null);
+
+        // Find and set initial views (loading state)
+        TextView teamNameTextView = dialogView.findViewById(R.id.teamNameTextView);
+        TextView groupNameTextView = dialogView.findViewById(R.id.groupNameTextView);
+        TextView statsTextView = dialogView.findViewById(R.id.statsTextView);
+        TextView rosterTextView = dialogView.findViewById(R.id.rosterTextView);
+        Button closeButton = dialogView.findViewById(R.id.closeButton);
+
+        // Set the team name initially
+        teamNameTextView.setText(standing.getTeamName());
+
+        // Create and show the dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
+
+        // Fetch team details from API
+        Call<Teams> call = apiService.getTeamDetails(standing.getTeamName());
+        call.enqueue(new Callback<Teams>() {
+            @Override
+            public void onResponse(Call<Teams> call, Response<Teams> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Teams teamDetails = response.body();
+
+                    // Update dialog views with fetched data
+                    groupNameTextView.setText("Group: " + teamDetails.getGroupName());
+                    statsTextView.setText("Wins: " + teamDetails.getWins() +
+                            ", Draws: " + teamDetails.getDraws() +
+                            ", Losses: " + teamDetails.getLosses() +
+                            ", GF: " + teamDetails.getGoalsFor() +
+                            ", GA: " + teamDetails.getGoalsAgainst() +
+                            ", GD: " + teamDetails.getGoalDifference());
+                    rosterTextView.setText("Squad Size: " + teamDetails.getRosterCount());
+                } else {
+                    Toast.makeText(StandingsActivity.this, "Failed to load team details.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Teams> call, Throwable t) {
+                Toast.makeText(StandingsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 
 
     private void fetchStandings() {

@@ -39,10 +39,12 @@ public class Standing {
 
     @SerializedName("Points")
     private int points;
+    @SerializedName("rosterCount")
+    private int rosterCount;
 
     // Constructor
     public Standing(int position, String teamName, int matchesPlayed, int wins, int draws, int losses, int goalsFor,
-                    int goalsAgainst, int goalDifference, int points, int groupID, String groupName) {
+                    int goalsAgainst, int goalDifference, int points, int groupID, String groupName,int rosterCount) {
         this.position = position;
         this.teamName = teamName;
         this.matchesPlayed = matchesPlayed;
@@ -55,6 +57,7 @@ public class Standing {
         this.points = points;
         this.groupID = groupID; // Initialize groupID if needed
         this.groupName = groupName; // Initialize groupName if needed
+        this.rosterCount=rosterCount;
     }
 
     // Getters and Setters
@@ -152,5 +155,13 @@ public class Standing {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public int getRosterCount() {
+        return rosterCount;
+    }
+
+    public void setRosterCount(int rosterCount) {
+        this.rosterCount = rosterCount;
     }
 }

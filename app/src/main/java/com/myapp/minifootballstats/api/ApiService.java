@@ -69,6 +69,12 @@ public interface ApiService {
 
     @GET("/standings/general")
     Call<List<Standing>> getGeneralStandings(); // General Table
+
+    @GET("/team-details")
+    Call<Teams> getTeamDetails(@Query("teamName") String teamName);
+
+
+
     @GET("/api/playerstats")  // Define your API endpoint
     Call<List<PlayerStats>> getPlayerStats();
 

@@ -12,10 +12,16 @@ import java.util.List;
 
 public class StandingsAdapter extends RecyclerView.Adapter<StandingsAdapter.ViewHolder> {
     private List<Standing> standingsList;
+    private OnItemClickListener onItemClickListener;
+    // Define an interface for item click handling
+    public interface OnItemClickListener {
+        void onItemClick(Standing standing);
+    }
 
     // Constructor to initialize standings list
-    public StandingsAdapter(List<Standing> standingsList) {
+    public StandingsAdapter(List<Standing> standingsList, OnItemClickListener onItemClickListener) {
         this.standingsList = standingsList;
+        this.onItemClickListener = onItemClickListener;
     }
 
     // Method to update the standings dynamically
@@ -48,6 +54,8 @@ public class StandingsAdapter extends RecyclerView.Adapter<StandingsAdapter.View
         holder.gaTextView.setText(String.valueOf(standing.getGoalsAgainst()));
         holder.gdTextView.setText(String.valueOf(standing.getGoalDifference()));
         holder.pointsTextView.setText(String.valueOf(standing.getPoints()));
+        // Set a click listener for the entire item view
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(standing));
     }
 
     @Override
