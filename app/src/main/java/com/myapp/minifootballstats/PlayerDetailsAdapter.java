@@ -97,8 +97,30 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         });
 
         holder.removeIcon.setOnClickListener(view -> {
+            // Automatically save the current stats before removing the player
+            int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
+            int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
+            int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
+            String updatedPosition = holder.playerPositionEditText.getText().toString();
+
+            // Save stats to SharedPreferences with matchId
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
+            editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
+            editor.apply();
+
+            // Update stats in the database
+            updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
+            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
+            updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
+            updatePlayerPosition(player.getPlayerID(), matchId, updatedPosition);
+
+            // Then remove the player
             removePlayer(player);
         });
+
     }
 
 
@@ -117,13 +139,21 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     public void removePlayer(Player player) {
         int position = playerList.indexOf(player);
         if (position != -1) {
-            playerList.remove(position);
-            notifyItemRemoved(position); // Notify about the item removal
-        }
+            if (position != -1) {
+                // Reset the player's stats to zero before removal
+                resetPlayerStats(player.getPlayerID());
 
-        if (matchId != -1) {
-            Log.d("PlayerDetailsAdapter", "Removing player ID: " + player.getPlayerID() + " from match ID: " + matchId);
-            removePlayerFromMatch(player.getPlayerID());
+                // Update match scores after resetting the stats
+                updateMatchScores();
+
+                // Then proceed to remove the player
+                playerList.remove(position);
+                notifyItemRemoved(position); // Notify about the item removal
+
+                // Log and call the API to remove the player from the match
+                Log.d("PlayerDetailsAdapter", "Removing player ID: " + player.getPlayerID() + " from match ID: " + matchId);
+                removePlayerFromMatch(player.getPlayerID());
+            }
         }
     }
 
@@ -151,9 +181,8 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     }
 
     public void removePlayerFromMatch(int playerId) {
-        // First reset the player's stats to 0
-        resetPlayerStats(playerId);
-        Call<Void> call = apiService.removePlayerFromMatch(playerId, matchId); // playerId as Path, matchId as Query
+        // Call the API to remove the player from the match
+        Call<Void> call = apiService.removePlayerFromMatch(playerId, matchId);
 
         call.enqueue(new Callback<Void>() {
             @Override
@@ -161,7 +190,8 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
                 if (response.isSuccessful()) {
                     Log.d("PlayerDetailsAdapter", "Player removed from match.");
                     Toast.makeText(context, "Player removed from match.", Toast.LENGTH_SHORT).show();
-                    //removePlayer(player);
+
+                    // Update match scores again after the player is fully removed
                     updateMatchScores();
                 } else {
                     Log.e("PlayerDetailsAdapter", "Failed to remove player from match: " + response.message());
@@ -176,6 +206,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             }
         });
     }
+
     public void resetPlayerStats(int playerId) {
         updatePlayerStat(playerId, "goals", 0);
         updatePlayerStat(playerId, "yellowCards", 0);

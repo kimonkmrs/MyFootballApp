@@ -3,9 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.myapp.minifootballstats">
 
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+
+        android:configChanges="locale|keyboard|keyboardHidden"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -46,6 +49,11 @@
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             />
+
+
+
     </application>
+
+
 
 </manifest>
