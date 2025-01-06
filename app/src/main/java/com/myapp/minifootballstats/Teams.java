@@ -3,6 +3,8 @@ package com.myapp.minifootballstats;
 import com.google.gson.annotations.SerializedName;
 
 public class Teams {
+    @SerializedName("TeamID")
+    private int teamID;  // This field holds the team ID
     @SerializedName("TeamName")
     private String teamName;  // Assuming you have a name field
 
@@ -32,7 +34,8 @@ public class Teams {
 
 
     // Constructor
-    public Teams(String teamName, String groupName, int wins, int draws, int losses, int goalsFor, int goalsAgainst, int goalDifference, int squadSize) {
+    public Teams(int teamID,String teamName, String groupName, int wins, int draws, int losses, int goalsFor, int goalsAgainst, int goalDifference, int squadSize) {
+        this.teamID=teamID;
         this.teamName = teamName;
         this.groupName = groupName;
         this.wins = wins;
@@ -45,6 +48,10 @@ public class Teams {
     }
 
     // Getters and Setters
+    // Getter for teamID
+    public int getTeamID() {
+        return teamID;
+    }
     public String getTeamName() {
         return teamName;
     }

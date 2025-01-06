@@ -4,22 +4,57 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
-
-    <EditText
-        android:id="@+id/editTextTeam1ID"
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Team 1 ID"
-        android:inputType="number"
-        android:minHeight="48dp" />
+        android:orientation="horizontal">
+        <TableRow>
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteTeam1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search Team 1"
+                android:minHeight="48dp"
+                android:completionThreshold="1" />
 
-    <EditText
-        android:id="@+id/editTextTeam2ID"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Team 2 ID"
-        android:inputType="number"
-        android:minHeight="48dp" />
+            <ImageView
+                android:id="@+id/search1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center"
+                android:src="@drawable/baseline_search_24"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+
+<TableLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <TableRow>
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTeam2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Team 2"
+            android:minHeight="48dp"
+            android:completionThreshold="1" />
+        <ImageView
+            android:id="@+id/search2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_gravity="center"
+            android:src="@drawable/baseline_search_24"/>
+
+    </TableRow>
+
+
+</TableLayout>
+
 
     <EditText
         android:id="@+id/editTextScoreTeam1"
