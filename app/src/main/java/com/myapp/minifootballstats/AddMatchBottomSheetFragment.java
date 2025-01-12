@@ -1,9 +1,10 @@
 package com.myapp.minifootballstats;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,9 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.myapp.minifootballstats.api.ApiService;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +57,7 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
     private HashMap<String, Integer> teamMap = new HashMap<>();
 
     private static final Locale GREEK_LOCALE = new Locale("el", "GR");
-    private static final SimpleDateFormat INPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", GREEK_LOCALE);
-    private static final SimpleDateFormat OUTPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", GREEK_LOCALE);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", GREEK_LOCALE);
 
     @Nullable
     @Override
@@ -71,6 +71,11 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
         editTextScoreTeam2 = view.findViewById(R.id.editTextScoreTeam2);
         editTextMatchDate = view.findViewById(R.id.editTextMatchDate);
         buttonSaveMatch = view.findViewById(R.id.buttonSaveMatch);
+
+        // Disable typing and open DatePicker on click
+        editTextMatchDate.setFocusable(false);
+        editTextMatchDate.setOnClickListener(v -> showDatePicker());
+
         // Handle visibility of search icons
         autoCompleteTeam1.addTextChangedListener(new TextWatcher() {
             @Override
@@ -78,11 +83,7 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
-                    view.findViewById(R.id.search1).setVisibility(View.GONE);
-                } else {
-                    view.findViewById(R.id.search1).setVisibility(View.VISIBLE);
-                }
+                view.findViewById(R.id.search1).setVisibility(s.length() > 0 ? View.GONE : View.VISIBLE);
             }
 
             @Override
@@ -95,29 +96,12 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
-                    view.findViewById(R.id.search2).setVisibility(View.GONE);
-                } else {
-                    view.findViewById(R.id.search2).setVisibility(View.VISIBLE);
-                }
+                view.findViewById(R.id.search2).setVisibility(s.length() > 0 ? View.GONE : View.VISIBLE);
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
         });
-        autoCompleteTeam1.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus && autoCompleteTeam1.getText().toString().isEmpty()) {
-                view.findViewById(R.id.search1).setVisibility(View.VISIBLE);
-            }
-        });
-
-        autoCompleteTeam2.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus && autoCompleteTeam2.getText().toString().isEmpty()) {
-                view.findViewById(R.id.search2).setVisibility(View.VISIBLE);
-            }
-        });
-
-
 
         // Set up Retrofit
         Retrofit retrofit = new Retrofit.Builder()
@@ -166,9 +150,33 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
         autoCompleteTeam2.setAdapter(adapter);
     }
 
+    private void showDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+
+        new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            showTimePicker(calendar);
+
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void showTimePicker(Calendar calendar) {
+        new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0);
+
+            String formattedDateTime = DATE_FORMAT.format(calendar.getTime());
+            editTextMatchDate.setText(formattedDateTime);
+
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show();
+    }
+
     private void insertMatch() {
         try {
-            // Retrieve selected team names
             String selectedTeam1 = autoCompleteTeam1.getText().toString();
             String selectedTeam2 = autoCompleteTeam2.getText().toString();
 
@@ -177,32 +185,22 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
                 return;
             }
 
-            // Retrieve corresponding team IDs
             int team1ID = teamMap.get(selectedTeam1);
             int team2ID = teamMap.get(selectedTeam2);
 
             int scoreTeam1 = Integer.parseInt(editTextScoreTeam1.getText().toString());
             int scoreTeam2 = Integer.parseInt(editTextScoreTeam2.getText().toString());
-            String matchDateInput = editTextMatchDate.getText().toString();
+            String matchDateFormatted = editTextMatchDate.getText().toString();
 
-            // Validate and format the date
-            String matchDateFormatted = validateAndFormatDate(matchDateInput);
-            if (matchDateFormatted == null) {
-                Toast.makeText(getContext(), "Invalid date format. Please use YYYY-MM-DD HH:MM:SS", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Create MatchRequest object
             MatchRequest matchRequest = new MatchRequest(team1ID, team2ID, scoreTeam1, scoreTeam2, matchDateFormatted);
 
-            // Make the API call
             Call<InsertMatchResponse> call = apiService.insertMatch(matchRequest);
             call.enqueue(new Callback<InsertMatchResponse>() {
                 @Override
                 public void onResponse(Call<InsertMatchResponse> call, Response<InsertMatchResponse> response) {
                     if (response.isSuccessful()) {
                         Toast.makeText(getContext(), "Match inserted successfully", Toast.LENGTH_SHORT).show();
-                        dismiss(); // Close the dialog
+                        dismiss();
                         if (listener != null) {
                             listener.onMatchAdded();
                         }
@@ -220,17 +218,5 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private String validateAndFormatDate(String dateInput) {
-        try {
-            Date date = INPUT_FORMAT.parse(dateInput);
-            if (date != null) {
-                return OUTPUT_FORMAT.format(date);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

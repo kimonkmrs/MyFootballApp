@@ -51,17 +51,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Add Player Button for Team 1 -->
+
         <Button
-            android:id="@+id/roundButtonPlus1"
+                android:id="@+id/roundButtonPlus1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_add_circle_24"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewTeam1"
+                tools:ignore="SpeakableTextPresentCheck" />
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/baseline_add_circle_24"
-            android:textSize="24sp"
+            android:id="@+id/new_player1"
+            android:text="Add New Players"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recyclerViewTeam1"
-            tools:ignore="SpeakableTextPresentCheck" />
+            app:layout_constraintTop_toBottomOf="@id/roundButtonPlus1"
+            />
+
+        <!-- Add Player Button for Team 1 -->
+
 
         <!-- Team 2 Label -->
         <TextView
@@ -72,7 +85,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"
-            app:layout_constraintTop_toBottomOf="@id/roundButtonPlus1"
+            app:layout_constraintTop_toBottomOf="@id/new_player1"
             app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Spinner for Team 2 -->
@@ -106,6 +119,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/recyclerViewTeam2"
             tools:ignore="SpeakableTextPresentCheck" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_player2"
+            android:text="Add New Players"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/roundButtonPlus2"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
