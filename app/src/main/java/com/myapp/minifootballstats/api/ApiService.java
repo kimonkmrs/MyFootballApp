@@ -91,6 +91,8 @@ public interface ApiService {
     @GET("/teams")
     Call<List<Teams>> getTeamNames();  // API to get team names
 
+    @GET("/positions")
+    Call<List<PlayerStats>> getPosition();  // API to get team names
 
 
 

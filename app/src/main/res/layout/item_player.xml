@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="8dp"
     android:background="@color/white">
 
     <!-- Player Name -->
@@ -17,7 +17,8 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="8dp"
+        android:layout_marginStart="0dp"/>
 
     <!-- Icons and EditTexts Section -->
     <LinearLayout
@@ -34,15 +35,29 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
 
-            <ImageView
-                android:id="@+id/goal"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/baseline_sports_soccer_24"
-                android:contentDescription="Goals icon"
-                android:tint="@color/black"
-                tools:ignore="UseAppTint" />
+                <ImageView
+                    android:id="@+id/goal"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/baseline_sports_soccer_24"
+                    android:contentDescription="Goals icon"
+                    android:tint="@color/black"
+                    tools:ignore="UseAppTint"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Goals"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+
 
             <EditText
                 android:id="@+id/goals"
@@ -63,16 +78,30 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginStart="16dp">
+            android:layout_marginStart="8dp">
 
-            <ImageView
-                android:id="@+id/yellow_card"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="Yellow cards icon"
-                android:src="@drawable/baseline_yellow_card"
-                android:tint="@color/yellow"
-                tools:ignore="UseAppTint,ImageContrastCheck" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/yellow_card"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="Yellow cards icon"
+                    android:src="@drawable/baseline_yellow_card"
+                    android:tint="@color/yellow"
+                    tools:ignore="UseAppTint,ImageContrastCheck" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yellows"
+                    android:textColor="@color/black"/>
+
+            </LinearLayout>
+
 
             <EditText
                 android:id="@+id/yellows"
@@ -93,16 +122,30 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginStart="16dp">
+            android:layout_marginStart="8dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/red_card"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/baseline_red_card"
+                    android:contentDescription="Red cards icon"
+                    android:tint="@color/red"
+                    tools:ignore="UseAppTint" />
 
-            <ImageView
-                android:id="@+id/red_card"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/baseline_red_card"
-                android:contentDescription="Red cards icon"
-                android:tint="@color/red"
-                tools:ignore="UseAppTint" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reds"
+                    android:textColor="@color/black"/>
+
+            </LinearLayout>
+
+
 
             <EditText
                 android:id="@+id/reds"
@@ -125,17 +168,31 @@
         android:text="Player Position"
         android:textColor="@color/black"
         android:layout_marginBottom="4dp" />
-
-    <EditText
-        android:id="@+id/playerPosition"
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/edittext_background"
-        android:hint="Enter position"
-        android:inputType="text"
-        android:padding="8dp"
-        tools:ignore="TouchTargetSizeCheck" />
+        android:orientation="horizontal">
+        <TableRow>
+
+            <AutoCompleteTextView
+                android:id="@+id/position"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player's Position"
+                android:minHeight="48dp"
+                android:completionThreshold="1" />
+            <ImageView
+                android:id="@+id/searchPos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center"
+                android:src="@drawable/baseline_search_24"/>
+        </TableRow>
+
+    </TableLayout>
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

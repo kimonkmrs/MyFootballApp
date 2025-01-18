@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.minifootballstats.api.ApiService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -28,6 +31,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     private int matchId;
     private ApiService apiService;
     private Context context;
+    private List<String> positionList = new ArrayList<>(); // Store positions for AutoComplete
     public interface ScoreUpdateListener {
         void onScoreUpdated();
     }
@@ -37,7 +41,28 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         this.playerList = playerList;
         this.matchId = matchId;
         this.apiService = apiService;
+        fetchPositions();
 
+    }
+    private void fetchPositions() {
+        Call<List<PlayerStats>> call = apiService.getPosition();
+        call.enqueue(new Callback<List<PlayerStats>>() {
+            @Override
+            public void onResponse(Call<List<PlayerStats>> call, Response<List<PlayerStats>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    for (PlayerStats stat : response.body()) {
+                        positionList.add(stat.getPosition());
+                    }
+                } else {
+                    Log.e("PlayerDetailsAdapter", "Failed to fetch positions. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PlayerStats>> call, Throwable t) {
+                Log.e("PlayerDetailsAdapter", "Network error: " + t.getMessage());
+            }
+        });
     }
 
     @NonNull
@@ -51,9 +76,17 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
         Player player = playerList.get(position);
         holder.playerNameTextView.setText(player.getPlayerName());
+        // ✅ Set up the AutoCompleteTextView with the fetched positions
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, positionList);
+        holder.playerPositionAutoComplete.setAdapter(adapter);
+
+        // ✅ Set the selected position from SharedPreferences
+        SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
+        String savedPosition = sharedPreferences.getString(matchId + "_" + player.getPlayerID() + "_position", "");
+        holder.playerPositionAutoComplete.setText(savedPosition);
 
         // Use SharedPreferences keys scoped by matchId
-        SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
+        //SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
         int goals = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_goals", 0);
         int yellowCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_yellowCards", 0);
         int redCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_redCards", 0);
@@ -63,7 +96,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         holder.goalsEditText.setText(String.valueOf(goals));
         holder.yellowCardsEditText.setText(String.valueOf(yellowCards));
         holder.redCardsEditText.setText(String.valueOf(redCards));
-        holder.playerPositionEditText.setText(playerPosition);
+        //holder.playerPositionEditText.setText(playerPosition);
 
         // Save stats only when save button is clicked
         holder.saveButton.setOnClickListener(v -> {
@@ -71,13 +104,17 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
             int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
             int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
-            String updatedPosition = holder.playerPositionEditText.getText().toString();
+
+            // ✅ Retrieve the selected position from AutoCompleteTextView
+            String updatedPosition = holder.playerPositionAutoComplete.getText().toString();
 
             // Save stats to SharedPreferences with matchId
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
             editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
             editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
+
+            // ✅ Save the updated position
             editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
             editor.apply();
 
@@ -89,8 +126,8 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
             updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
 
-            // Update player position in the database
-            updatePlayerPosition(player.getPlayerID(),matchId, updatedPosition);
+            // ✅ Update player position in the database
+            updatePlayerPosition(player.getPlayerID(), matchId, updatedPosition);
 
             // Update match scores after all player stats are updated
             updateMatchScores();
@@ -101,13 +138,17 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
             int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
             int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
-            String updatedPosition = holder.playerPositionEditText.getText().toString();
+
+            // ✅ Retrieve the selected position from AutoCompleteTextView
+            String updatedPosition = holder.playerPositionAutoComplete.getText().toString();
 
             // Save stats to SharedPreferences with matchId
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
             editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
             editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
+
+            // ✅ Save the updated position
             editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
             editor.apply();
 
@@ -115,11 +156,14 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
             updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
             updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
+
+            // ✅ Update player position in the database
             updatePlayerPosition(player.getPlayerID(), matchId, updatedPosition);
 
             // Then remove the player
             removePlayer(player);
         });
+
 
     }
 
@@ -283,7 +327,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         EditText goalsEditText;
         EditText yellowCardsEditText;
         EditText redCardsEditText;
-        EditText playerPositionEditText;
+        AutoCompleteTextView playerPositionAutoComplete;
         Button saveButton; // Add save button
 
         public PlayerViewHolder(@NonNull View itemView) {
@@ -294,7 +338,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
             goalsEditText = itemView.findViewById(R.id.goals);
             yellowCardsEditText = itemView.findViewById(R.id.yellows);
             redCardsEditText = itemView.findViewById(R.id.reds);
-            playerPositionEditText = itemView.findViewById(R.id.playerPosition);
+            playerPositionAutoComplete = itemView.findViewById(R.id.position);
             saveButton = itemView.findViewById(R.id.saveButton); // Initialize the save button
         }
     }
