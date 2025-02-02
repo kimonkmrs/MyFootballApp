@@ -71,6 +71,9 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
         editTextScoreTeam2 = view.findViewById(R.id.editTextScoreTeam2);
         editTextMatchDate = view.findViewById(R.id.editTextMatchDate);
         buttonSaveMatch = view.findViewById(R.id.buttonSaveMatch);
+        // Set default scores to 0
+        editTextScoreTeam1.setText("0");
+        editTextScoreTeam2.setText("0");
 
         // Disable typing and open DatePicker on click
         editTextMatchDate.setFocusable(false);
@@ -188,8 +191,9 @@ public class AddMatchBottomSheetFragment extends BottomSheetDialogFragment {
             int team1ID = teamMap.get(selectedTeam1);
             int team2ID = teamMap.get(selectedTeam2);
 
-            int scoreTeam1 = Integer.parseInt(editTextScoreTeam1.getText().toString());
-            int scoreTeam2 = Integer.parseInt(editTextScoreTeam2.getText().toString());
+            // Default to 0 if the field is empty
+            int scoreTeam1 = editTextScoreTeam1.getText().toString().isEmpty() ? 0 : Integer.parseInt(editTextScoreTeam1.getText().toString());
+            int scoreTeam2 = editTextScoreTeam2.getText().toString().isEmpty() ? 0 : Integer.parseInt(editTextScoreTeam2.getText().toString());
             String matchDateFormatted = editTextMatchDate.getText().toString();
 
             MatchRequest matchRequest = new MatchRequest(team1ID, team2ID, scoreTeam1, scoreTeam2, matchDateFormatted);
