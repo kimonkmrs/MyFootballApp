@@ -5,6 +5,7 @@ import com.myapp.minifootballstats.Group;
 import com.myapp.minifootballstats.InsertMatchResponse;
 import com.myapp.minifootballstats.Match;
 import com.myapp.minifootballstats.MatchRequest;
+import com.myapp.minifootballstats.MatchesPerTeam;
 import com.myapp.minifootballstats.Player;
 import com.myapp.minifootballstats.PlayerMatchRequest;
 import com.myapp.minifootballstats.PlayerRequest;
@@ -95,6 +96,8 @@ public interface ApiService {
     Call<List<PlayerStats>> getPosition();  // API to get team names
 
 
+    @GET("/matches/team/{teamName}")
+    Call<List<MatchesPerTeam>> getMatchesForTeam(@Path("teamName") String teamName);
 
 
 

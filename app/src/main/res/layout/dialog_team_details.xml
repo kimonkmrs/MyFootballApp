@@ -38,6 +38,15 @@
         android:text="Squad Size: 0"
         android:textSize="16sp"
         android:padding="8dp" />
+    <!-- RecyclerView to Display Matches -->
+    <!-- RecyclerView to Display Matches -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/matchesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:scrollbars="vertical"/>
+
 
     <Button
         android:id="@+id/closeButton"

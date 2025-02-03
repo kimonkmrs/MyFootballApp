@@ -148,6 +148,7 @@ public class StandingsActivity extends AppCompatActivity {
         TextView groupNameTextView = dialogView.findViewById(R.id.groupNameTextView);
         TextView statsTextView = dialogView.findViewById(R.id.statsTextView);
         TextView rosterTextView = dialogView.findViewById(R.id.rosterTextView);
+        RecyclerView matchesRecyclerView = dialogView.findViewById(R.id.matchesRecyclerView);
         Button closeButton = dialogView.findViewById(R.id.closeButton);
 
         // Set the team name initially
@@ -188,9 +189,45 @@ public class StandingsActivity extends AppCompatActivity {
                 Toast.makeText(StandingsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        fetchMatchesForTeam(standing.getTeamName(), matchesRecyclerView);
+
+
     }
 
 
+    // Fetch matches for a team and populate RecyclerView
+    private void fetchMatchesForTeam(String teamName, RecyclerView recyclerView) {
+        Call<List<MatchesPerTeam>> call = apiService.getMatchesForTeam(teamName);
+        call.enqueue(new Callback<List<MatchesPerTeam>>() {
+            @Override
+            public void onResponse(Call<List<MatchesPerTeam>> call, Response<List<MatchesPerTeam>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<MatchesPerTeam> matchesList = response.body();
+
+                    if (!matchesList.isEmpty()) {
+                        recyclerView.setVisibility(View.VISIBLE);
+
+                        // Ensure a layout manager is set before assigning the adapter
+                        if (recyclerView.getLayoutManager() == null) {
+                            recyclerView.setLayoutManager(new LinearLayoutManager(StandingsActivity.this));
+                        }
+
+                        MatchesPerTeamAdapter adapter = new MatchesPerTeamAdapter(matchesList);
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                    }
+                } else {
+                    Toast.makeText(StandingsActivity.this, "Failed to load matches.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MatchesPerTeam>> call, Throwable t) {
+                Toast.makeText(StandingsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     private void fetchStandings() {
