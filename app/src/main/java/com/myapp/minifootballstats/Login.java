@@ -3,8 +3,11 @@ package com.myapp.minifootballstats;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +34,7 @@ public class Login extends AppCompatActivity {
     ProgressBar progressBar;
 
     FirebaseFirestore fStore;
+    boolean passwordVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,37 @@ public class Login extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         Log.d("Login", "onCreate: Activity created");  // Log activity creation
+        mPassword.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                int drawableEnd = 2; // Index for drawableEnd (right-side drawable)
+
+                if (mPassword.getCompoundDrawablesRelative()[drawableEnd] != null) {
+                    int drawableWidth = mPassword.getCompoundDrawablesRelative()[drawableEnd].getBounds().width();
+                    int touchX = (int) event.getRawX();
+                    int rightEdge = mPassword.getRight();
+
+                    // Check if touch is inside the drawable area
+                    if (touchX >= rightEdge - drawableWidth - mPassword.getPaddingEnd()) {
+                        int selection = mPassword.getSelectionEnd();
+
+                        if (passwordVisible) {
+                            // Change to password-hidden icon
+                            mPassword.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.baseline_visibility_off_24, 0);
+                            mPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                        } else {
+                            // Change to password-visible icon
+                            mPassword.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.baseline_visibility_24, 0);
+                            mPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                        }
+
+                        passwordVisible = !passwordVisible;
+                        mPassword.setSelection(selection); // Maintain cursor position
+                        return true;
+                    }
+                }
+            }
+            return false;
+        });
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,16 +103,17 @@ public class Login extends AppCompatActivity {
                 }
 
                 // Validate password
-                if (TextUtils.isEmpty(password)) {
-                    Log.d("Login", "Password is empty");  // Log empty password
-                    mPassword.setError("Password is Required.");
-                    return;
-                }
-                if (password.length() < 6) {
-                    Log.d("Login", "Password too short: " + password.length() + " characters");  // Log short password
-                    mPassword.setError("Weak Password. Password must be at least 6 characters long.");
-                    return;
-                }
+
+                //if (TextUtils.isEmpty(password)) {
+                //    Log.d("Login", "Password is empty");  // Log empty password
+                //    mPassword.setError("Password is Required.");
+                //    return;
+                //}
+                //if (password.length() < 6) {
+                //    Log.d("Login", "Password too short: " + password.length() + " characters");  // Log short password
+                //    mPassword.setError("Weak Password. Password must be at least 6 characters long.");
+                //    return;
+                //}
 
                 progressBar.setVisibility(View.VISIBLE);
                 Log.d("Login", "Starting authentication for email: " + email);  // Log authentication start

@@ -73,6 +73,8 @@
         android:alpha="0.6"
         android:textColor="#F1EFF3"
         android:textColorHint="#F8F0F0"
+        android:drawableEnd="@drawable/baseline_visibility_off_24"
+        android:longClickable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

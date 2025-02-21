@@ -1,57 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/teamNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Team Name"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:padding="8dp" />
-
-    <TextView
-        android:id="@+id/groupNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Group Name"
-        android:textSize="16sp"
-        android:padding="8dp" />
-
-    <TextView
-        android:id="@+id/statsTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Wins: 0, Draws: 0, Losses: 0, GF:0, GA:0, GD:0"
-        android:textSize="16sp"
-        android:padding="8dp" />
-
-    <TextView
-        android:id="@+id/rosterTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Squad Size: 0"
-        android:textSize="16sp"
-        android:padding="8dp" />
-    <!-- RecyclerView to Display Matches -->
-    <!-- RecyclerView to Display Matches -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/matchesRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:scrollbars="vertical"/>
-
-
-    <Button
+    <!-- Circular Close (X) Icon in Top-Right -->
+    <ImageButton
         android:id="@+id/closeButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Close"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <!-- Main Content Layout -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Close"
-        android:layout_marginTop="16dp" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:paddingTop="48dp"> <!-- Adds space below the icon -->
+
+        <TextView
+            android:id="@+id/teamNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Team Name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/groupNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Group Name"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/statsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wins: 0, Draws: 0, Losses: 0, GF:0, GA:0, GD:0"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/rosterTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Squad Size: 0"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/results"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Results"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+
+        <!-- RecyclerView to Display Matches -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/matchesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:scrollbars="vertical"/>
+    </LinearLayout>
+
+</RelativeLayout>

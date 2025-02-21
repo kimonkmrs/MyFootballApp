@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
@@ -149,7 +150,7 @@ public class StandingsActivity extends AppCompatActivity {
         TextView statsTextView = dialogView.findViewById(R.id.statsTextView);
         TextView rosterTextView = dialogView.findViewById(R.id.rosterTextView);
         RecyclerView matchesRecyclerView = dialogView.findViewById(R.id.matchesRecyclerView);
-        Button closeButton = dialogView.findViewById(R.id.closeButton);
+        ImageButton closeButton = dialogView.findViewById(R.id.closeButton);
 
         // Set the team name initially
         teamNameTextView.setText(standing.getTeamName());
