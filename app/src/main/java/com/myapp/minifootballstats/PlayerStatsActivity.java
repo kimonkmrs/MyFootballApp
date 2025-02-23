@@ -31,6 +31,8 @@ public class PlayerStatsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private PlayerStatsAdapter playerStatsAdapter;
     private List<PlayerStats> playerStatsList = new ArrayList<>();
+
+    private List<String> positionList = new ArrayList<>();
     private TextView noDataTextView;
     private ApiService apiService;
     private Spinner teamSpinner;
@@ -67,6 +69,27 @@ public class PlayerStatsActivity extends AppCompatActivity {
 
         fetchPlayerStats();  // Fetch player stats initially (for "All Teams")
         setupSpinnerListener();  // Set listener for team selection
+        fetchPlayerPosition();
+    }
+    private void fetchPlayerPosition() {
+        Call<List<PlayerStatsMatches>> call = apiService.getPositionMatches();
+        call.enqueue(new Callback<List<PlayerStatsMatches>>() {
+            @Override
+            public void onResponse(Call<List<PlayerStatsMatches>> call, Response<List<PlayerStatsMatches>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    for (PlayerStatsMatches stat : response.body()) {
+                        positionList.add(stat.getPositionMatches()); // ✅ Now this works because positionList is List<String>
+                    }
+                } else {
+                    Log.e("PlayerDetailsAdapter", "Failed to fetch positions. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PlayerStatsMatches>> call, Throwable t) {
+                Log.e("PlayerDetailsAdapter", "Network error: " + t.getMessage());
+            }
+        });
     }
 
     // Fetch team names to populate the spinner

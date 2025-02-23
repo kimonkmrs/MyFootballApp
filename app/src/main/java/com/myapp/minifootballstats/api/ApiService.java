@@ -10,6 +10,7 @@ import com.myapp.minifootballstats.Player;
 import com.myapp.minifootballstats.PlayerMatchRequest;
 import com.myapp.minifootballstats.PlayerRequest;
 import com.myapp.minifootballstats.PlayerStats;
+import com.myapp.minifootballstats.PlayerStatsMatches;
 import com.myapp.minifootballstats.Standing;
 import com.myapp.minifootballstats.Teams;
 
@@ -93,7 +94,11 @@ public interface ApiService {
     Call<List<Teams>> getTeamNames();  // API to get team names
 
     @GET("/positions")
-    Call<List<PlayerStats>> getPosition();  // API to get team names
+    Call<List<PlayerStats>> getPosition();  // API to get players Positions
+
+
+    @GET("/positionsMatches")
+    Call<List<PlayerStatsMatches>> getPositionMatches();  // API to get players Positions
 
 
     @GET("/matches/team/{teamName}")
