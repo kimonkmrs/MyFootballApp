@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.myapp.minifootballstats.api.ApiService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -77,20 +79,50 @@ public class PlayerStatsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<PlayerStatsMatches>> call, Response<List<PlayerStatsMatches>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    positionList.clear();
                     for (PlayerStatsMatches stat : response.body()) {
-                        positionList.add(stat.getPositionMatches()); // ✅ Now this works because positionList is List<String>
+                        if (stat != null && stat.getPositionMatches() != null) { // ✅ Avoid NullPointerException
+                            Log.d("PlayerStatsActivity", "Fetched Position: " + stat.getPositionMatches());
+                            positionList.add(stat.getPositionMatches());
+                        } else {
+                            Log.w("PlayerStatsActivity", "Skipping null position entry!"); // Log warning
+                        }
                     }
+                    populatePositionDropdown(); // ✅ Call dropdown setup only when list is valid
                 } else {
-                    Log.e("PlayerDetailsAdapter", "Failed to fetch positions. Code: " + response.code());
+                    Log.e("PlayerStatsActivity", "Failed to fetch positions. Code: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<List<PlayerStatsMatches>> call, Throwable t) {
-                Log.e("PlayerDetailsAdapter", "Network error: " + t.getMessage());
+                Log.e("PlayerStatsActivity", "Network error: " + t.getMessage());
             }
         });
     }
+
+
+    private void populatePositionDropdown() {
+        AutoCompleteTextView positionDropdown = findViewById(R.id.position);
+
+        if (positionList.isEmpty()) {
+            Log.e("PlayerStatsActivity", "Position list is empty. Check API response.");
+            return;
+        }
+
+        // ✅ Remove any unexpected null values (just in case)
+        positionList.removeAll(Collections.singleton(null));
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_dropdown_item_1line, positionList);
+
+        positionDropdown.setAdapter(adapter);
+        positionDropdown.setThreshold(1);  // Show suggestions after 1 character
+    }
+
+
+
+
 
     // Fetch team names to populate the spinner
     private void fetchTeamNames() {
