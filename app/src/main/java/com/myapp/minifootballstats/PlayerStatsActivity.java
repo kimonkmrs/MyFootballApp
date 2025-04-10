@@ -21,7 +21,9 @@ import com.myapp.minifootballstats.api.ApiService;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +42,8 @@ public class PlayerStatsActivity extends AppCompatActivity {
     private Spinner teamSpinner;
     private List<String> teamNames = new ArrayList<>();  // Holds team names for the spinner
     private String selectedTeam = "All Teams";  // Default selection
+
+    private String selectedPosition = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,20 +109,35 @@ public class PlayerStatsActivity extends AppCompatActivity {
     private void populatePositionDropdown() {
         AutoCompleteTextView positionDropdown = findViewById(R.id.position);
 
+        // ✅ Clear any previous selection
+        positionDropdown.setText("");
+        selectedPosition = "";
+
         if (positionList.isEmpty()) {
             Log.e("PlayerStatsActivity", "Position list is empty. Check API response.");
             return;
         }
 
-        // ✅ Remove any unexpected null values (just in case)
+        // ✅ Remove nulls & duplicates (optional but helpful for clean UX)
         positionList.removeAll(Collections.singleton(null));
+        Set<String> uniquePositions = new HashSet<>(positionList);
+        positionList.clear();
+        positionList.addAll(uniquePositions);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_dropdown_item_1line, positionList);
 
         positionDropdown.setAdapter(adapter);
-        positionDropdown.setThreshold(1);  // Show suggestions after 1 character
+        positionDropdown.setThreshold(1); // Show suggestions after 1 character
+
+        // ✅ Set selection listener
+        positionDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            selectedPosition = parent.getItemAtPosition(position).toString();
+            Log.d("PlayerStatsActivity", "Selected Position: " + selectedPosition);
+            fetchPlayerStats(); // Refresh with selected position
+        });
     }
+
 
 
 
@@ -194,54 +213,65 @@ public class PlayerStatsActivity extends AppCompatActivity {
     // Fetch player stats based on the selected team
     private void fetchPlayerStats() {
         Call<List<PlayerStats>> call;
-        if (selectedTeam.equals("All Teams")) {
-            call = apiService.getPlayerStats();  // Get stats for all teams
+
+        boolean isTeamAll = selectedTeam.equals("All Teams");
+        boolean isPositionEmpty = selectedPosition == null || selectedPosition.trim().isEmpty();
+
+        if (isTeamAll && isPositionEmpty) {
+            call = apiService.getPlayerStats();  // No filters
+        } else if (!isTeamAll && isPositionEmpty) {
+            call = apiService.getPlayerStatsByTeams(selectedTeam);  // Filter by team only
+        } else if (isTeamAll) {
+            call = apiService.getPlayerStatsByPosition(selectedPosition);  // Filter by position only
         } else {
-            call = apiService.getPlayerStatsByTeams(selectedTeam);  // Filter stats by selected team
+            // You may want to create a new API endpoint for filtering by both team and position
+            // For now, fallback to filtering manually in app after getting by team or by position
+            call = apiService.getPlayerStatsByPosition(selectedPosition);  // Filter by position first
         }
 
         call.enqueue(new Callback<List<PlayerStats>>() {
-
             @Override
             public void onResponse(Call<List<PlayerStats>> call, Response<List<PlayerStats>> response) {
                 if (response.isSuccessful()) {
                     List<PlayerStats> stats = response.body();
                     if (stats != null && !stats.isEmpty()) {
-                        // If player stats are found, display them in the RecyclerView
+                        if (!isTeamAll && !isPositionEmpty) {
+                            // Manual filter by team after position API call
+                            List<PlayerStats> filtered = new ArrayList<>();
+                            for (PlayerStats ps : stats) {
+                                if (ps.getTeamName().equalsIgnoreCase(selectedTeam)) {
+                                    filtered.add(ps);
+                                }
+                            }
+                            stats = filtered;
+                        }
+
                         playerStatsList.clear();
                         playerStatsList.addAll(stats);
                         playerStatsAdapter.notifyDataSetChanged();
                         noDataTextView.setVisibility(View.GONE);
-                        //noDataTextView.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.VISIBLE);
                     } else {
-                        // If no player stats are found, display the "No Data" message
-                        noDataTextView.setText("No players found for " + selectedTeam);
+                        noDataTextView.setText("No players found for selection.");
                         noDataTextView.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);  // Hide RecyclerView if no data
+                        recyclerView.setVisibility(View.GONE);
                     }
                 } else {
-                    Log.e("PlayerStatsActivity", "Failed to load player stats: " + response.code());
-                    Toast.makeText(PlayerStatsActivity.this, "Failed to load player stats", Toast.LENGTH_SHORT).show();
                     noDataTextView.setText("Failed to load data. Please try again.");
                     noDataTextView.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);  // Hide RecyclerView in case of failure
+                    recyclerView.setVisibility(View.GONE);
                 }
-
-
-        }
+            }
 
             @Override
             public void onFailure(Call<List<PlayerStats>> call, Throwable t) {
-                Log.e("PlayerStatsActivity", "Network error: " + t.getMessage());
-                Toast.makeText(PlayerStatsActivity.this, "Network error, please try again later.", Toast.LENGTH_SHORT).show();
-                noDataTextView.setText("Network error. Please try again later.");
+                noDataTextView.setText("Network error. Please try again.");
                 noDataTextView.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);  // Hide RecyclerView in case of failure
+                recyclerView.setVisibility(View.GONE);
             }
-
         });
     }
+
     private void showPopupMenu(View anchorView) {
         PopupMenu popupMenu = new PopupMenu(this, anchorView);
         popupMenu.getMenuInflater().inflate(R.menu.menu_players, popupMenu.getMenu());

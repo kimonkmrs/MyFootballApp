@@ -89,6 +89,9 @@ public interface ApiService {
     @GET("/api/playerstats/byTeams/{teamName}")
     Call<List<PlayerStats>> getPlayerStatsByTeams(@Path("teamName") String teamName);
 
+    @GET("/api/playerstats/byPosition/{position}")
+    Call<List<PlayerStats>> getPlayerStatsByPosition(@Path("position") String position);
+
 
     @GET("/teams")
     Call<List<Teams>> getTeamNames();  // API to get team names
