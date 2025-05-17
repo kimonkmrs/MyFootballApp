@@ -1,7 +1,9 @@
 package com.myapp.minifootballstats;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +36,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PlayerListActivity extends AppCompatActivity {
     private ImageView back, menu;
+    private long totalExtraTime = 0; // Accumulated extra time during pauses
+
+    private TextView mainTimerText, extraTimeText;
     private Spinner spinnerTeam1, spinnerTeam2;
     private RecyclerView recyclerViewTeam1, recyclerViewTeam2;
     private PlayerDetailsAdapter adapterTeam1, adapterTeam2;
@@ -39,8 +46,24 @@ public class PlayerListActivity extends AppCompatActivity {
     private List<Player> playersTeam2 = new ArrayList<>();
     private ApiService apiService;
     private int selectedMatchID;
-    private Button buttonAddPlayerTeam1;
+    private Button buttonAddPlayerTeam1,btnStart, btnPause, btnStop;
     private Button buttonAddPlayerTeam2;
+    private Handler timerHandler = new Handler();
+    private Runnable timerRunnable;
+    private long startTime = 0;
+    private boolean isRunning = false;
+
+    private boolean isPaused = false;
+
+    private Handler extraTimeHandler = new Handler();
+    private Runnable extraTimeRunnable;
+    private long extraStartTime = 0;
+    private boolean isExtraRunning = false;
+    private long extraTimeAccumulated = 0; // total accumulated extra pause time
+    private long extraPauseStartTime = 0;  // when pause started
+
+
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -80,6 +103,11 @@ public class PlayerListActivity extends AppCompatActivity {
         recyclerViewTeam2.setLayoutManager(new LinearLayoutManager(this));
         buttonAddPlayerTeam1 = findViewById(R.id.roundButtonPlus1);
         buttonAddPlayerTeam2 = findViewById(R.id.roundButtonPlus2);
+        mainTimerText = findViewById(R.id.mainTimerText);
+        extraTimeText = findViewById(R.id.extraTimeText);
+        btnStart = findViewById(R.id.btnStart);
+        btnPause = findViewById(R.id.btnPause);
+        btnStop = findViewById(R.id.btnStop);
 
         buttonAddPlayerTeam1.setOnClickListener(v -> showAddPlayerDialog(team1Id));  // Use team1Id from intent
         buttonAddPlayerTeam2.setOnClickListener(v -> showAddPlayerDialog(team2Id));  // Use team2Id from intent
@@ -90,6 +118,11 @@ public class PlayerListActivity extends AppCompatActivity {
 
         recyclerViewTeam1.setAdapter(adapterTeam1);
         recyclerViewTeam2.setAdapter(adapterTeam2);
+
+        // Start Button Logic
+        btnStart.setOnClickListener(view -> startTimer());
+        btnPause.setOnClickListener(view -> pauseOrUnpauseTimer());
+        btnStop.setOnClickListener(view -> stopTimer());
 
         // Set team names to TextViews
         ((TextView) findViewById(R.id.team1Label)).setText(team1Name != null ? team1Name : "Team 1");
@@ -265,6 +298,204 @@ public class PlayerListActivity extends AppCompatActivity {
 
         popupMenu.show();
     }
+//    private void startTimer() {
+//        TimerUtils.startTimer(this);
+//        startHandlerLoop();
+//        btnStart.setEnabled(false);
+//        btnPause.setEnabled(true);
+//        btnStop.setEnabled(true);
+//        btnPause.setText("Pause");
+//    }
+private void startTimer() {
+    startTime = System.currentTimeMillis();
+    TimerUtils.saveStartTime(this, selectedMatchID, startTime);
+    TimerUtils.setTimerPaused(this, selectedMatchID, false);
+    TimerUtils.saveElapsedTime(this, selectedMatchID, 0);
+    startHandlerLoop();
+
+    btnStart.setEnabled(false);
+    btnPause.setEnabled(true);
+    btnStop.setEnabled(true);
+    btnPause.setText("Pause");
+    isRunning = true;
+}
+    private void pauseOrUnpauseTimer() {
+        if (!isPaused) {
+            // Pause clicked — main timer keeps running normally
+            // Start extra timer counting
+            extraPauseStartTime = System.currentTimeMillis();
+            startExtraTime();
+            isPaused = true;
+            btnPause.setText("Unpause");
+        } else {
+            // Unpause clicked — stop extra timer counting but keep accumulated
+            long pauseDuration = System.currentTimeMillis() - extraPauseStartTime;
+            extraTimeAccumulated += pauseDuration;
+            stopExtraTime();
+            isPaused = false;
+            btnPause.setText("Pause");
+        }
+    }
+
+
+
+
+
+
+
+    private void startHandlerLoop() {
+        timerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                long start = TimerUtils.getStartTime(PlayerListActivity.this, selectedMatchID); // Fix: add selectedMatchID
+                long elapsed = System.currentTimeMillis() - start;
+                TimerUtils.saveElapsedTime(PlayerListActivity.this, selectedMatchID, elapsed); // Fix: add selectedMatchID
+
+                int seconds = (int) (elapsed / 1000);
+                int minutes = seconds / 60;
+                seconds = seconds % 60;
+                mainTimerText.setText(String.format("%02d:%02d", minutes, seconds));
+                timerHandler.postDelayed(this, 1000);
+            }
+        };
+        timerHandler.post(timerRunnable);
+        isRunning = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (TimerUtils.isTimerRunning(this, selectedMatchID)) {
+            boolean wasPaused = TimerUtils.isTimerPaused(this, selectedMatchID);
+            long displayTimeMillis;
+
+            // Restore from SharedPreferences
+            SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
+            extraTimeAccumulated = prefs.getLong("extraTimeAccumulated", 0);
+            extraPauseStartTime = prefs.getLong("extraPauseStartTime", 0);
+            isPaused = prefs.getBoolean("isPaused", false);
+
+            if (wasPaused) {
+                displayTimeMillis = TimerUtils.getElapsedTime(this, selectedMatchID);
+                updateTimerDisplay(displayTimeMillis);
+
+                btnPause.setText("Unpause");
+
+                // Resume live extra time updates
+                if (!isExtraRunning) {
+                    extraPauseStartTime = System.currentTimeMillis(); // mark new pause start
+                    startExtraTime(); // Runnable will use accumulated time + now
+                }
+
+            } else {
+                long savedStartTime = TimerUtils.getStartTime(this, selectedMatchID);
+                startTime = savedStartTime;
+                displayTimeMillis = System.currentTimeMillis() - savedStartTime;
+
+                startHandlerLoop();
+                isRunning = true;
+
+                if (isPaused && !isExtraRunning) {
+                    startExtraTime();
+                }
+            }
+
+            btnStart.setEnabled(false);
+            btnPause.setEnabled(true);
+            btnStop.setEnabled(true);
+        }
+    }
+
+    private void updateTimerDisplay(long millis) {
+        int seconds = (int) (millis / 1000);
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        mainTimerText.setText(String.format("%02d:%02d", minutes, seconds));
+    }
+    private void updateExtraTimeUI(long extraMillis) {
+        int seconds = (int) (extraMillis / 1000);
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        extraTimeText.setText(String.format("%02d:%02d", minutes, seconds));
+    }
+
+
+    // In stopTimer(), reset extraTimeAccumulated to 0 and update UI:
+    private void stopTimer() {
+        timerHandler.removeCallbacks(timerRunnable);
+        stopExtraTime();
+
+        isRunning = false;
+        isPaused = false;
+        extraTimeAccumulated = 0;
+        extraPauseStartTime = 0;
+
+        mainTimerText.setText("00:00");
+        extraTimeText.setText("00:00");
+
+        btnStart.setEnabled(true);
+        btnPause.setEnabled(false);
+        btnStop.setEnabled(false);
+        btnPause.setText("Pause");
+
+        // Clear saved prefs
+        SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
+        prefs.edit().clear().apply();
+
+        TimerUtils.clearTimerData(this, selectedMatchID);
+    }
+    private void stopExtraTime() {
+        extraTimeHandler.removeCallbacks(extraTimeRunnable);
+    }
+    private void startExtraTime() {
+        extraTimeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                long elapsedExtra = extraTimeAccumulated;
+                if (isPaused) {
+                    // Add current extra paused duration while pause active
+                    elapsedExtra += System.currentTimeMillis() - extraPauseStartTime;
+                }
+                int seconds = (int) (elapsedExtra / 1000);
+                int minutes = seconds / 60;
+                seconds = seconds % 60;
+                extraTimeText.setText(String.format("%02d:%02d", minutes, seconds));
+                extraTimeHandler.postDelayed(this, 1000);
+            }
+        };
+        extraTimeHandler.post(extraTimeRunnable);
+    }
+
+    public static void clearTimerData(Context context, int matchId) {
+        SharedPreferences prefs = context.getSharedPreferences("TimerPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.remove("startTime_" + matchId);
+        editor.remove("elapsedTime_" + matchId);
+        editor.remove("timerPaused_" + matchId);
+        editor.apply();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Save current extra pause time and pause info
+        SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // If currently paused, update accumulated with current ongoing pause duration
+        if (isPaused) {
+            long currentPauseDuration = System.currentTimeMillis() - extraPauseStartTime;
+            extraTimeAccumulated += currentPauseDuration;
+            extraPauseStartTime = System.currentTimeMillis(); // reset start to now
+        }
+
+        editor.putLong("extraTimeAccumulated", extraTimeAccumulated);
+        editor.putBoolean("isPaused", isPaused);
+        editor.putLong("extraPauseStartTime", extraPauseStartTime);
+        editor.apply();
+    }
+
 
 
 
