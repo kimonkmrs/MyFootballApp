@@ -370,7 +370,6 @@ private void startTimer() {
             boolean wasPaused = TimerUtils.isTimerPaused(this, selectedMatchID);
             long displayTimeMillis;
 
-            // Restore from SharedPreferences
             SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
             extraTimeAccumulated = prefs.getLong("extraTimeAccumulated", 0);
             extraPauseStartTime = prefs.getLong("extraPauseStartTime", 0);
@@ -379,13 +378,19 @@ private void startTimer() {
             if (wasPaused) {
                 displayTimeMillis = TimerUtils.getElapsedTime(this, selectedMatchID);
                 updateTimerDisplay(displayTimeMillis);
-
                 btnPause.setText("Unpause");
 
-                // Resume live extra time updates
-                if (!isExtraRunning) {
-                    extraPauseStartTime = System.currentTimeMillis(); // mark new pause start
-                    startExtraTime(); // Runnable will use accumulated time + now
+                // Update extra time display manually
+                long extraElapsed = extraTimeAccumulated;
+                if (isPaused) {
+                    extraElapsed += System.currentTimeMillis() - extraPauseStartTime;
+                }
+                updateExtraTimeUI(extraElapsed);
+
+                // Optionally resume updates
+                if (!isExtraRunning && isPaused) {
+                    extraPauseStartTime = System.currentTimeMillis();
+                    startExtraTime();
                 }
 
             } else {
@@ -404,8 +409,28 @@ private void startTimer() {
             btnStart.setEnabled(false);
             btnPause.setEnabled(true);
             btnStop.setEnabled(true);
+        } else {
+            // Not running: Still update the extra time display based on saved value
+            long extraElapsed = extraTimeAccumulated;
+            if (isPaused && extraPauseStartTime > 0) {
+                extraElapsed += System.currentTimeMillis() - extraPauseStartTime;
+            }
+            updateExtraTimeUI(extraElapsed);
         }
+        // --- Always update extra time display ---
+        SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
+        extraTimeAccumulated = prefs.getLong("extraTimeAccumulated", 0);
+        extraPauseStartTime = prefs.getLong("extraPauseStartTime", 0);
+        isPaused = prefs.getBoolean("isPaused", false);
+
+// Only add pause time if paused AND pauseStartTime is valid
+        long extraElapsed = extraTimeAccumulated;
+        if (isPaused && extraPauseStartTime > 0) {
+            extraElapsed += System.currentTimeMillis() - extraPauseStartTime;
+        }
+        updateExtraTimeUI(extraElapsed);
     }
+
 
     private void updateTimerDisplay(long millis) {
         int seconds = (int) (millis / 1000);
@@ -447,6 +472,8 @@ private void startTimer() {
     }
     private void stopExtraTime() {
         extraTimeHandler.removeCallbacks(extraTimeRunnable);
+        isExtraRunning = false;
+
     }
     private void startExtraTime() {
         extraTimeRunnable = new Runnable() {
@@ -465,6 +492,8 @@ private void startTimer() {
             }
         };
         extraTimeHandler.post(extraTimeRunnable);
+        isExtraRunning = true;
+
     }
 
     public static void clearTimerData(Context context, int matchId) {
