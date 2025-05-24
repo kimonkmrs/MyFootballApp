@@ -1,241 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp"
-    android:background="@color/white">
-
-    <!-- Player Name -->
-    <TextView
-        android:id="@+id/playerName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Player Name"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:paddingBottom="8dp"
-        android:layout_marginStart="0dp"/>
-
-    <!-- Icons and EditTexts Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingBottom="8dp">
-
-
-        <!-- Icon 1 and EditText -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/goal"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/baseline_sports_soccer_24"
-                    android:contentDescription="Goals icon"
-                    android:tint="@color/black"
-                    tools:ignore="UseAppTint"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Goals"
-                    android:textColor="@color/black"/>
-            </LinearLayout>
-
-
-
-            <EditText
-                android:id="@+id/goals"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/edittext_background"
-                android:gravity="center"
-                android:hint="Goals"
-                android:inputType="number"
-                android:padding="4dp"
-                tools:ignore="TouchTargetSizeCheck" />
-        </LinearLayout>
-
-        <!-- Icon 2 and EditText -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginStart="8dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/yellow_card"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="Yellow cards icon"
-                    android:src="@drawable/baseline_yellow_card"
-                    android:tint="@color/yellow"
-                    tools:ignore="UseAppTint,ImageContrastCheck" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Yellows"
-                    android:textColor="@color/black"/>
-
-            </LinearLayout>
-
-
-            <EditText
-                android:id="@+id/yellows"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/edittext_background"
-                android:gravity="center"
-                android:hint="Yellow card"
-                android:inputType="number"
-                android:padding="4dp"
-                tools:ignore="TouchTargetSizeCheck" />
-        </LinearLayout>
-
-        <!-- Icon 3 and EditText -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginStart="8dp">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-                <ImageView
-                    android:id="@+id/red_card"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/baseline_red_card"
-                    android:contentDescription="Red cards icon"
-                    android:tint="@color/red"
-                    tools:ignore="UseAppTint" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reds"
-                    android:textColor="@color/black"/>
-
-            </LinearLayout>
-
-
-
-            <EditText
-                android:id="@+id/reds"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/edittext_background"
-                android:gravity="center"
-                android:hint="Red card"
-                android:inputType="number"
-                android:padding="4dp"
-                tools:ignore="TouchTargetSizeCheck" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Player Position -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Player Position"
-        android:textColor="@color/black"
-        android:layout_marginBottom="4dp" />
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TableRow>
-
-            <AutoCompleteTextView
-                android:id="@+id/position"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Player's Position"
-                android:minHeight="48dp"
-                android:completionThreshold="1" />
-            <ImageView
-                android:id="@+id/searchPos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_gravity="center"
-                android:src="@drawable/baseline_search_24"/>
-        </TableRow>
-
-    </TableLayout>
-
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingBottom="8dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/removePlayerIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/ic_delete"
-            android:contentDescription="Remove player"
-            android:layout_marginEnd="16dp"
-            android:tint="@color/red"
-            tools:ignore="UseAppTint" />
+        <!-- Player Name -->
         <TextView
-            android:id="@+id/removePlayerText"
-            android:layout_width="wrap_content"
+            android:id="@+id/player_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_delete"
-            android:text="Remove player from this match"
+            android:text="Player Name"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginEnd="16dp"
-            android:tint="@color/black"
-            tools:ignore="UseAppTint" />
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:paddingBottom="12dp" />
+
+        <!-- Position Search Bar -->
+        <AutoCompleteTextView
+            android:id="@+id/position_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Select Position"
+            android:inputType="text"
+            android:padding="8dp"
+            android:drawableEnd="@drawable/baseline_search_24"
+            android:drawablePadding="8dp"
+            android:background="@android:drawable/edit_text"
+            tools:ignore="TouchTargetSizeCheck" />
+
+
+        <!-- Stats Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:weightSum="3"
+            android:layout_marginTop="4dp">
+
+            <include
+                layout="@layout/layout_stat_counter"
+                android:id="@+id/goals_counter"
+                android:layout_weight="1"
+                tools:ignore="IncludeLayoutParam"/>
+
+            <include
+                layout="@layout/layout_stat_counter"
+                android:id="@+id/yellow_cards_counter"
+                android:layout_weight="1"
+                tools:ignore="IncludeLayoutParam" />
+
+            <include
+                layout="@layout/layout_stat_counter"
+                android:id="@+id/red_cards_counter"
+                android:layout_weight="1"
+                tools:ignore="IncludeLayoutParam" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/removeIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_delete"
+                android:contentDescription="Remove player"
+                android:layout_marginEnd="16dp"
+
+                app:tint="@color/red"
+
+                tools:ignore="UseAppTint" />
+            <TextView
+                android:id="@+id/removePlayerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Remove player from this match"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginEnd="16dp"
+                android:tint="@color/black"
+                tools:ignore="UseAppTint" />
+
+        </LinearLayout>
+        <!-- Remove Icon -->
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:layout_marginTop="16dp"
+            app:backgroundTint="@color/blue"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false" />
 
     </LinearLayout>
-    <!-- Remove Icon -->
+</androidx.cardview.widget.CardView>
 
-
-
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Player Stats for this Game"
-        android:textAllCaps="false"
-        android:backgroundTint="@color/blue"
-        android:textColor="@color/white"
-        android:padding="12dp"
-        android:layout_marginBottom="8dp" />
-
-</LinearLayout>

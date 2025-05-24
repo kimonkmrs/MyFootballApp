@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
     public interface ScoreUpdateListener {
         void onScoreUpdated();
     }
+
 
     public PlayerDetailsAdapter(Context context, List<Player> playerList, int matchId, ApiService apiService) {
         this.context = context;
@@ -71,101 +73,215 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_player, parent, false);
         return new PlayerViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
         Player player = playerList.get(position);
+
         holder.playerNameTextView.setText(player.getPlayerName());
-        // ✅ Set up the AutoCompleteTextView with the fetched positions
+
+        // Set labels
+        holder.goalsLabel.setText("Goals");
+        holder.yellowCardsLabel.setText("Yellow Cards");
+        holder.redCardsLabel.setText("Red Cards");
+
+        // Set icons
+        holder.goalsIcon.setImageResource(R.drawable.baseline_sports_soccer_24);
+        holder.yellowCardsIcon.setImageResource(R.drawable.baseline_yellow_card);
+        holder.redCardsIcon.setImageResource(R.drawable.baseline_red_card);
+
+        // SharedPreferences
+        SharedPreferences sp = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
+
+        // ✅ Load saved values
+        int goals = sp.getInt(matchId + "_" + player.getPlayerID() + "_goals", 0);
+        int yellowCards = sp.getInt(matchId + "_" + player.getPlayerID() + "_yellowCards", 0);
+        int redCards = sp.getInt(matchId + "_" + player.getPlayerID() + "_redCards", 0);
+        String savedPosition = sp.getString(matchId + "_" + player.getPlayerID() + "_position", "");
+
+        // ✅ Set data to views
+        holder.goalsCount.setText(String.valueOf(goals));
+        holder.yellowCardsCount.setText(String.valueOf(yellowCards));
+        holder.redCardsCount.setText(String.valueOf(redCards));
+        holder.positionAutoComplete.setText(savedPosition);
+
+        // ✅ Set up AutoCompleteTextView adapter for positions
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, positionList);
-        holder.playerPositionAutoComplete.setAdapter(adapter);
+        holder.positionAutoComplete.setAdapter(adapter);
 
-        // ✅ Set the selected position from SharedPreferences
-        SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
-        String savedPosition = sharedPreferences.getString(matchId + "_" + player.getPlayerID() + "_position", "");
-        holder.playerPositionAutoComplete.setText(savedPosition);
+        // Increment/Decrement buttons
+        holder.goalsIncrement.setOnClickListener(v -> {
+            int current = Integer.parseInt(holder.goalsCount.getText().toString());
+            holder.goalsCount.setText(String.valueOf(current + 1));
+        });
+        holder.goalsDecrement.setOnClickListener(v -> {
+            int current = Integer.parseInt(holder.goalsCount.getText().toString());
+            if (current > 0) holder.goalsCount.setText(String.valueOf(current - 1));
+        });
 
-        // Use SharedPreferences keys scoped by matchId
-        //SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
-        int goals = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_goals", 0);
-        int yellowCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_yellowCards", 0);
-        int redCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_redCards", 0);
-        String playerPosition = sharedPreferences.getString(matchId + "_" + player.getPlayerID() + "_position", "");
+        holder.yellowCardsIncrement.setOnClickListener(v -> {
+            int current = Integer.parseInt(holder.yellowCardsCount.getText().toString());
+            holder.yellowCardsCount.setText(String.valueOf(current + 1));
+        });
+        holder.yellowCardsDecrement.setOnClickListener(v -> {
+            int current = Integer.parseInt(holder.yellowCardsCount.getText().toString());
+            if (current > 0) holder.yellowCardsCount.setText(String.valueOf(current - 1));
+        });
 
-        // Set loaded values into EditText fields
-        holder.goalsEditText.setText(String.valueOf(goals));
-        holder.yellowCardsEditText.setText(String.valueOf(yellowCards));
-        holder.redCardsEditText.setText(String.valueOf(redCards));
-        //holder.playerPositionEditText.setText(playerPosition);
+        holder.redCardsIncrement.setOnClickListener(v -> {
+            int current = Integer.parseInt(holder.redCardsCount.getText().toString());
+            holder.redCardsCount.setText(String.valueOf(current + 1));
+        });
+        holder.redCardsDecrement.setOnClickListener(v -> {
+            int current = Integer.parseInt(holder.redCardsCount.getText().toString());
+            if (current > 0) holder.redCardsCount.setText(String.valueOf(current - 1));
+        });
 
-        // Save stats only when save button is clicked
+        // ✅ Save button logic
         holder.saveButton.setOnClickListener(v -> {
-            // Retrieve the current values from EditText fields
-            int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
-            int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
-            int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
+            int updatedGoals = Integer.parseInt(holder.goalsCount.getText().toString());
+            int updatedYellow = Integer.parseInt(holder.yellowCardsCount.getText().toString());
+            int updatedRed = Integer.parseInt(holder.redCardsCount.getText().toString());
+            String updatedPosition = holder.positionAutoComplete.getText().toString();
 
-            // ✅ Retrieve the selected position from AutoCompleteTextView
-            String updatedPosition = holder.playerPositionAutoComplete.getText().toString();
-
-            // Save stats to SharedPreferences with matchId
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+            // Save to SharedPreferences
+            SharedPreferences.Editor editor = sp.edit();
             editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
-            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
-            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
-
-            // ✅ Save the updated position
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellow);
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRed);
             editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
             editor.apply();
 
-            // Optionally show confirmation
-            Toast.makeText(context, "Player stats saved locally for this match.", Toast.LENGTH_SHORT).show();
-
-            // Update player stats in the database
+            // ✅ Save to database (your existing methods)
             updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
-            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
-            updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
-
-            // ✅ Update player position in the database
+            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellow);
+            updatePlayerStat(player.getPlayerID(), "redCards", updatedRed);
             updatePlayerPosition(player.getPlayerID(), matchId, updatedPosition);
 
-            // Update match scores after all player stats are updated
+            // Optionally update match score logic
             updateMatchScores();
+
+            Toast.makeText(context, "Player stats saved.", Toast.LENGTH_SHORT).show();
         });
 
-        holder.removeIcon.setOnClickListener(view -> {
-            // Automatically save the current stats before removing the player
-            int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
-            int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
-            int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
+        // Optional: remove logic if needed
+        holder.removeIcon.setOnClickListener(v -> {
+            // Same logic as save before removing
+            int updatedGoals = Integer.parseInt(holder.goalsCount.getText().toString());
+            int updatedYellow = Integer.parseInt(holder.yellowCardsCount.getText().toString());
+            int updatedRed = Integer.parseInt(holder.redCardsCount.getText().toString());
+            String updatedPosition = holder.positionAutoComplete.getText().toString();
 
-            // ✅ Retrieve the selected position from AutoCompleteTextView
-            String updatedPosition = holder.playerPositionAutoComplete.getText().toString();
-
-            // Save stats to SharedPreferences with matchId
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+            SharedPreferences.Editor editor = sp.edit();
             editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
-            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
-            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
-
-            // ✅ Save the updated position
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellow);
+            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRed);
             editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
             editor.apply();
 
-            // Update stats in the database
             updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
-            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
-            updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
-
-            // ✅ Update player position in the database
+            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellow);
+            updatePlayerStat(player.getPlayerID(), "redCards", updatedRed);
             updatePlayerPosition(player.getPlayerID(), matchId, updatedPosition);
 
-            // Then remove the player
-            removePlayer(player);
+            removePlayer(player); // Implement this
         });
-
-
     }
+
+
+//    @Override
+//    public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
+//        Player player = playerList.get(position);
+//        holder.playerNameTextView.setText(player.getPlayerName());
+//        // ✅ Set up the AutoCompleteTextView with the fetched positions
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, positionList);
+//        holder.playerPositionAutoComplete.setAdapter(adapter);
+//
+//        // ✅ Set the selected position from SharedPreferences
+//        SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
+//        String savedPosition = sharedPreferences.getString(matchId + "_" + player.getPlayerID() + "_position", "");
+//        holder.playerPositionAutoComplete.setText(savedPosition);
+//
+//        // Use SharedPreferences keys scoped by matchId
+//        //SharedPreferences sharedPreferences = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
+//        int goals = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_goals", 0);
+//        int yellowCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_yellowCards", 0);
+//        int redCards = sharedPreferences.getInt(matchId + "_" + player.getPlayerID() + "_redCards", 0);
+//        String playerPosition = sharedPreferences.getString(matchId + "_" + player.getPlayerID() + "_position", "");
+//
+//        // Set loaded values into EditText fields
+//        holder.goalsEditText.setText(String.valueOf(goals));
+//        holder.yellowCardsEditText.setText(String.valueOf(yellowCards));
+//        holder.redCardsEditText.setText(String.valueOf(redCards));
+//        //holder.playerPositionEditText.setText(playerPosition);
+//
+//        // Save stats only when save button is clicked
+//        holder.saveButton.setOnClickListener(v -> {
+//            // Retrieve the current values from EditText fields
+//            int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
+//            int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
+//            int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
+//
+//            // ✅ Retrieve the selected position from AutoCompleteTextView
+//            String updatedPosition = holder.playerPositionAutoComplete.getText().toString();
+//
+//            // Save stats to SharedPreferences with matchId
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
+//            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
+//            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
+//
+//            // ✅ Save the updated position
+//            editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
+//            editor.apply();
+//
+//            // Optionally show confirmation
+//            Toast.makeText(context, "Player stats saved locally for this match.", Toast.LENGTH_SHORT).show();
+//
+//            // Update player stats in the database
+//            updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
+//            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
+//            updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
+//
+//            // ✅ Update player position in the database
+//            updatePlayerPosition(player.getPlayerID(), matchId, updatedPosition);
+//
+//            // Update match scores after all player stats are updated
+//            updateMatchScores();
+//        });
+//
+//        holder.removeIcon.setOnClickListener(view -> {
+//            // Automatically save the current stats before removing the player
+//            int updatedGoals = Integer.parseInt(holder.goalsEditText.getText().toString());
+//            int updatedYellowCards = Integer.parseInt(holder.yellowCardsEditText.getText().toString());
+//            int updatedRedCards = Integer.parseInt(holder.redCardsEditText.getText().toString());
+//
+//            // ✅ Retrieve the selected position from AutoCompleteTextView
+//            String updatedPosition = holder.playerPositionAutoComplete.getText().toString();
+//
+//            // Save stats to SharedPreferences with matchId
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putInt(matchId + "_" + player.getPlayerID() + "_goals", updatedGoals);
+//            editor.putInt(matchId + "_" + player.getPlayerID() + "_yellowCards", updatedYellowCards);
+//            editor.putInt(matchId + "_" + player.getPlayerID() + "_redCards", updatedRedCards);
+//
+//            // ✅ Save the updated position
+//            editor.putString(matchId + "_" + player.getPlayerID() + "_position", updatedPosition);
+//            editor.apply();
+//
+//            // Update stats in the database
+//            updatePlayerStat(player.getPlayerID(), "goals", updatedGoals);
+//            updatePlayerStat(player.getPlayerID(), "yellowCards", updatedYellowCards);
+//            updatePlayerStat(player.getPlayerID(), "redCards", updatedRedCards);
+//
+//            // ✅ Update player position in the database
+//            updatePlayerPosition(player.getPlayerID(), matchId, updatedPosition);
+//
+//            // Then remove the player
+//            removePlayer(player);
+//        });
+//
+//
+//    }
 
 
 
@@ -322,24 +438,65 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
 
 
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
-        TextView playerNameTextView,removePlayerText;
-        ImageView removeIcon; // Add this for the remove icon
-        EditText goalsEditText;
-        EditText yellowCardsEditText;
-        EditText redCardsEditText;
-        AutoCompleteTextView playerPositionAutoComplete;
-        Button saveButton; // Add save button
+        TextView playerNameTextView, removePlayerText;
+        ImageView removeIcon;
+        AutoCompleteTextView positionAutoComplete;
+        Button saveButton;
+
+        // Goals
+        View goalsCounter;
+        TextView goalsLabel;
+        ImageView goalsIcon;
+        ImageButton goalsIncrement, goalsDecrement;
+        TextView goalsCount;
+
+        // Yellow Cards
+        View yellowCardsCounter;
+        TextView yellowCardsLabel;
+        ImageView yellowCardsIcon;
+        ImageButton yellowCardsIncrement, yellowCardsDecrement;
+        TextView yellowCardsCount;
+
+        // Red Cards
+        View redCardsCounter;
+        TextView redCardsLabel;
+        ImageView redCardsIcon;
+        ImageButton redCardsIncrement, redCardsDecrement;
+        TextView redCardsCount;
 
         public PlayerViewHolder(@NonNull View itemView) {
             super(itemView);
-            playerNameTextView = itemView.findViewById(R.id.playerName);
-            removePlayerText=itemView.findViewById(R.id.removePlayerText);
-            removeIcon = itemView.findViewById(R.id.removePlayerIcon); // Initialize the remove icon
-            goalsEditText = itemView.findViewById(R.id.goals);
-            yellowCardsEditText = itemView.findViewById(R.id.yellows);
-            redCardsEditText = itemView.findViewById(R.id.reds);
-            playerPositionAutoComplete = itemView.findViewById(R.id.position);
-            saveButton = itemView.findViewById(R.id.saveButton); // Initialize the save button
+
+            playerNameTextView = itemView.findViewById(R.id.player_name);
+            positionAutoComplete = itemView.findViewById(R.id.position_search);
+            saveButton = itemView.findViewById(R.id.save_button);
+            removeIcon = itemView.findViewById(R.id.removeIcon);
+            removePlayerText = itemView.findViewById(R.id.removePlayerText); // if used
+
+            // Goals
+            goalsCounter = itemView.findViewById(R.id.goals_counter);
+            goalsLabel = goalsCounter.findViewById(R.id.stat_label);
+            goalsIcon = goalsCounter.findViewById(R.id.stat_icon);
+            goalsIncrement = goalsCounter.findViewById(R.id.stat_increase);
+            goalsDecrement = goalsCounter.findViewById(R.id.stat_decrease);
+            goalsCount = goalsCounter.findViewById(R.id.stat_value);
+
+            // Yellow Cards
+            yellowCardsCounter = itemView.findViewById(R.id.yellow_cards_counter);
+            yellowCardsLabel = yellowCardsCounter.findViewById(R.id.stat_label);
+            yellowCardsIcon = yellowCardsCounter.findViewById(R.id.stat_icon);
+            yellowCardsIncrement = yellowCardsCounter.findViewById(R.id.stat_increase);
+            yellowCardsDecrement = yellowCardsCounter.findViewById(R.id.stat_decrease);
+            yellowCardsCount = yellowCardsCounter.findViewById(R.id.stat_value);
+
+            // Red Cards
+            redCardsCounter = itemView.findViewById(R.id.red_cards_counter);
+            redCardsLabel = redCardsCounter.findViewById(R.id.stat_label);
+            redCardsIcon = redCardsCounter.findViewById(R.id.stat_icon);
+            redCardsIncrement = redCardsCounter.findViewById(R.id.stat_increase);
+            redCardsDecrement = redCardsCounter.findViewById(R.id.stat_decrease);
+            redCardsCount = redCardsCounter.findViewById(R.id.stat_value);
         }
     }
+
 }
