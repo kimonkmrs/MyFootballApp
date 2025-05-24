@@ -9,7 +9,7 @@
     android:padding="12dp"
     android:background="?attr/selectableItemBackground"
     android:layout_margin="4dp"
-    android:elevation="4dp"
+    android:elevation="0dp"
     android:backgroundTint="@android:color/white"
     android:clipToPadding="false"
     android:layout_gravity="center_horizontal">
@@ -18,8 +18,8 @@
         android:id="@+id/stat_icon"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:src="@drawable/baseline_sports_soccer_24"
-        app:tint="?attr/colorPrimary" />
+        app:srcCompat="@drawable/baseline_sports_soccer_24"
+        app:tint="@null"  />
 
     <TextView
         android:id="@+id/stat_label"
@@ -41,12 +41,13 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="-5dp"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
             <ImageButton
                 android:id="@+id/stat_increase"
-                android:layout_width="36dp"
+                android:layout_width="24dp"
                 android:layout_height="36dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Increase"
@@ -56,7 +57,7 @@
 
             <ImageButton
                 android:id="@+id/stat_decrease"
-                android:layout_width="36dp"
+                android:layout_width="24dp"
                 android:layout_height="36dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Decrease"
@@ -67,7 +68,7 @@
 
         <TextView
             android:id="@+id/stat_value"
-            android:layout_width="36dp"
+            android:layout_width="24dp"
             android:layout_height="match_parent"
             android:text="0"
             android:textSize="18sp"

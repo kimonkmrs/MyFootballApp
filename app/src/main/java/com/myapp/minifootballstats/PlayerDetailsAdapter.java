@@ -2,6 +2,7 @@ package com.myapp.minifootballstats;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.minifootballstats.api.ApiService;
@@ -85,9 +87,18 @@ public class PlayerDetailsAdapter extends RecyclerView.Adapter<PlayerDetailsAdap
         holder.redCardsLabel.setText("Red Cards");
 
         // Set icons
+//        holder.goalsIcon.setImageResource(R.drawable.baseline_sports_soccer_24);
+//        holder.goalsIcon.setColorFilter(ContextCompat.getColor(context, R.color.green), PorterDuff.Mode.SRC_IN);
+//        holder.yellowCardsIcon.setImageResource(R.drawable.baseline_yellow_card);
+//        holder.redCardsIcon.setImageResource(R.drawable.baseline_red_card);
         holder.goalsIcon.setImageResource(R.drawable.baseline_sports_soccer_24);
+        holder.goalsIcon.setColorFilter(ContextCompat.getColor(context, R.color.black), PorterDuff.Mode.SRC_IN);
+
         holder.yellowCardsIcon.setImageResource(R.drawable.baseline_yellow_card);
+        holder.yellowCardsIcon.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_IN);
+
         holder.redCardsIcon.setImageResource(R.drawable.baseline_red_card);
+        holder.redCardsIcon.setColorFilter(ContextCompat.getColor(context, R.color.red), PorterDuff.Mode.SRC_IN);
 
         // SharedPreferences
         SharedPreferences sp = context.getSharedPreferences("PlayerStats", Context.MODE_PRIVATE);
