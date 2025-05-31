@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
@@ -37,6 +38,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class PlayerListActivity extends AppCompatActivity {
     private ImageView back, menu;
     private long totalExtraTime = 0; // Accumulated extra time during pauses
+    private long halfTimeDurationMillis = 45 * 60 * 1000; // Default 45 minutes
+
 
     private TextView mainTimerText, extraTimeText;
     private Spinner spinnerTeam1, spinnerTeam2;
@@ -109,6 +112,9 @@ public class PlayerListActivity extends AppCompatActivity {
         btnPause = findViewById(R.id.btnPause);
         btnStop = findViewById(R.id.btnStop);
 
+
+
+
         buttonAddPlayerTeam1.setOnClickListener(v -> showAddPlayerDialog(team1Id));  // Use team1Id from intent
         buttonAddPlayerTeam2.setOnClickListener(v -> showAddPlayerDialog(team2Id));  // Use team2Id from intent
         // Assuming TeamID 2 for example
@@ -120,7 +126,30 @@ public class PlayerListActivity extends AppCompatActivity {
         recyclerViewTeam2.setAdapter(adapterTeam2);
 
         // Start Button Logic
-        btnStart.setOnClickListener(view -> startTimer());
+        btnStart.setOnClickListener(view -> {
+            EditText etHalfTimeMinutes = findViewById(R.id.etHalfTimeMinutes);
+            String input = etHalfTimeMinutes.getText().toString().trim();
+            if (!input.isEmpty()) {
+                try {
+                    int selectedMinutes = Integer.parseInt(input);
+                    if (selectedMinutes > 0) {
+                        halfTimeDurationMillis = selectedMinutes * 60 * 1000L;
+                    } else {
+                        halfTimeDurationMillis = 45 * 60 * 1000L;
+                        Toast.makeText(this, "Please enter a positive number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    halfTimeDurationMillis = 45 * 60 * 1000L;
+                    Toast.makeText(this, "Invalid number format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } else {
+                halfTimeDurationMillis = 45 * 60 * 1000L;
+            }
+            startTimer();
+        });
+
         btnPause.setOnClickListener(view -> pauseOrUnpauseTimer());
         btnStop.setOnClickListener(view -> stopTimer());
 
@@ -311,29 +340,37 @@ private void startTimer() {
     TimerUtils.saveStartTime(this, selectedMatchID, startTime);
     TimerUtils.setTimerPaused(this, selectedMatchID, false);
     TimerUtils.saveElapsedTime(this, selectedMatchID, 0);
+
+    // Example: Calculate or assign halfTimeDurationMillis here
+//    long halfTimeDurationMillis = 45 * 60 * 1000; // 45 minutes, change if needed
+
+    // Save halfTimeDurationMillis in SharedPreferences
+    SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
+    prefs.edit().putLong("halfTimeDuration_" + selectedMatchID, halfTimeDurationMillis).apply();
+
     startHandlerLoop();
 
     btnStart.setEnabled(false);
     btnPause.setEnabled(true);
     btnStop.setEnabled(true);
-    btnPause.setText("Pause");
+    btnPause.setText("Extra Time"); // Optional label update
     isRunning = true;
 }
     private void pauseOrUnpauseTimer() {
         if (!isPaused) {
             // Pause clicked — main timer keeps running normally
-            // Start extra timer counting
+            // Count Extra Timer counting
             extraPauseStartTime = System.currentTimeMillis();
             startExtraTime();
             isPaused = true;
-            btnPause.setText("Unpause");
+            btnPause.setText("Pause Extra Time");
         } else {
-            // Unpause clicked — stop extra timer counting but keep accumulated
+            // Unpause clicked — Pause Extra Timer counting but keep accumulated
             long pauseDuration = System.currentTimeMillis() - extraPauseStartTime;
             extraTimeAccumulated += pauseDuration;
             stopExtraTime();
             isPaused = false;
-            btnPause.setText("Pause");
+            btnPause.setText("Count Extra Time");
         }
     }
 
@@ -343,24 +380,49 @@ private void startTimer() {
 
 
 
-    private void startHandlerLoop() {
-        timerRunnable = new Runnable() {
-            @Override
-            public void run() {
-                long start = TimerUtils.getStartTime(PlayerListActivity.this, selectedMatchID); // Fix: add selectedMatchID
-                long elapsed = System.currentTimeMillis() - start;
-                TimerUtils.saveElapsedTime(PlayerListActivity.this, selectedMatchID, elapsed); // Fix: add selectedMatchID
+//    private void startHandlerLoop() {
+//        timerRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                long start = TimerUtils.getStartTime(PlayerListActivity.this, selectedMatchID); // Fix: add selectedMatchID
+//                long elapsed = System.currentTimeMillis() - start;
+//                TimerUtils.saveElapsedTime(PlayerListActivity.this, selectedMatchID, elapsed); // Fix: add selectedMatchID
+//
+//                int seconds = (int) (elapsed / 1000);
+//                int minutes = seconds / 60;
+//                seconds = seconds % 60;
+//                mainTimerText.setText(String.format("%02d:%02d", minutes, seconds));
+//                timerHandler.postDelayed(this, 1000);
+//            }
+//        };
+//        timerHandler.post(timerRunnable);
+//        isRunning = true;
+//    }
+private void startHandlerLoop() {
+    timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            long elapsed = System.currentTimeMillis() - startTime;
+            SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
+            halfTimeDurationMillis = prefs.getLong("halfTimeDuration_" + selectedMatchID, 45 * 60 * 1000L); // fallback to default 45 min
 
-                int seconds = (int) (elapsed / 1000);
-                int minutes = seconds / 60;
-                seconds = seconds % 60;
-                mainTimerText.setText(String.format("%02d:%02d", minutes, seconds));
+            long timeLeft = halfTimeDurationMillis - elapsed;
+
+            if (timeLeft > 0) {
+                updateTimerDisplay(timeLeft);
                 timerHandler.postDelayed(this, 1000);
+            } else {
+                updateTimerDisplay(0);
+                timerHandler.removeCallbacks(this);
+                Log.d("Timer", "Half-time reached");
+                startExtraTimeCountdown();  // START INJURY TIME COUNTDOWN
             }
-        };
-        timerHandler.post(timerRunnable);
-        isRunning = true;
-    }
+        }
+    };
+    timerHandler.post(timerRunnable);
+    isRunning = true;
+}
+
 
     @Override
     protected void onResume() {
@@ -378,7 +440,7 @@ private void startTimer() {
             if (wasPaused) {
                 displayTimeMillis = TimerUtils.getElapsedTime(this, selectedMatchID);
                 updateTimerDisplay(displayTimeMillis);
-                btnPause.setText("Unpause");
+                btnPause.setText("Pause Extra Time");
 
                 // Update extra time display manually
                 long extraElapsed = extraTimeAccumulated;
@@ -442,7 +504,7 @@ private void startTimer() {
         int seconds = (int) (extraMillis / 1000);
         int minutes = seconds / 60;
         seconds = seconds % 60;
-        extraTimeText.setText(String.format("%02d:%02d", minutes, seconds));
+        extraTimeText.setText(String.format("Extra Time:%02d:%02d", minutes, seconds));
     }
 
 
@@ -457,12 +519,12 @@ private void startTimer() {
         extraPauseStartTime = 0;
 
         mainTimerText.setText("00:00");
-        extraTimeText.setText("00:00");
+        extraTimeText.setText("Extra Time:00:00");
 
         btnStart.setEnabled(true);
         btnPause.setEnabled(false);
         btnStop.setEnabled(false);
-        btnPause.setText("Pause");
+        btnPause.setText("Count Extra Time");
 
         // Clear saved prefs
         SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
@@ -487,13 +549,45 @@ private void startTimer() {
                 int seconds = (int) (elapsedExtra / 1000);
                 int minutes = seconds / 60;
                 seconds = seconds % 60;
-                extraTimeText.setText(String.format("%02d:%02d", minutes, seconds));
+                extraTimeText.setText(String.format("Extra Time:%02d:%02d", minutes, seconds));
                 extraTimeHandler.postDelayed(this, 1000);
             }
         };
         extraTimeHandler.post(extraTimeRunnable);
         isExtraRunning = true;
 
+    }
+    private void startExtraTimeCountdown() {
+        long totalExtraTimeMillis = extraTimeAccumulated;
+
+        extraTimeRunnable = new Runnable() {
+            long extraTimeRemaining = totalExtraTimeMillis;
+
+            @Override
+            public void run() {
+                if (extraTimeRemaining > 0) {
+                    updateExtraTimeUI(extraTimeRemaining);
+                    extraTimeRemaining -= 1000;
+                    extraTimeHandler.postDelayed(this, 1000);
+                } else {
+                    updateExtraTimeUI(0);
+                    stopAllTimers();
+                    Toast.makeText(PlayerListActivity.this, "Full Time", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        extraTimeHandler.post(extraTimeRunnable);
+    }
+    private void stopAllTimers() {
+        isRunning = false;
+        isPaused = false;
+        timerHandler.removeCallbacks(timerRunnable);
+        extraTimeHandler.removeCallbacks(extraTimeRunnable);
+
+        btnStart.setEnabled(true);
+        btnPause.setEnabled(false);
+        btnStop.setEnabled(false);
+        btnPause.setText("Extra Time");
     }
 
     public static void clearTimerData(Context context, int matchId) {
