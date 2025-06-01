@@ -32,7 +32,17 @@ public class MatchesPerTeamAdapter extends RecyclerView.Adapter<MatchesPerTeamAd
     @Override
     public void onBindViewHolder(@NonNull MatchViewHolder holder, int position) {
         MatchesPerTeam match = matchList.get(position);
-        holder.gameTextView.setText(match.getGame());
+
+
+
+        String[] teams = match.getGame().split("-");
+        if (teams.length == 2) {
+            holder.team1TextView.setText(teams[0].trim());
+            holder.team2TextView.setText(teams[1].trim());
+        } else {
+            holder.team1TextView.setText("Team A");
+            holder.team2TextView.setText("Team B");
+        }
         holder.resultTextView.setText("Result: " + match.getResult());
 
         // Format and display the date
@@ -56,11 +66,13 @@ public class MatchesPerTeamAdapter extends RecyclerView.Adapter<MatchesPerTeamAd
     }
 
     public static class MatchViewHolder extends RecyclerView.ViewHolder {
-        TextView gameTextView, resultTextView, dateTextView;
+        TextView team1TextView, team2TextView, resultTextView, dateTextView;
+
 
         public MatchViewHolder(View itemView) {
             super(itemView);
-            gameTextView = itemView.findViewById(R.id.gameTextView);
+            team1TextView = itemView.findViewById(R.id.team1TextView);
+            team2TextView = itemView.findViewById(R.id.team2TextView);
             resultTextView = itemView.findViewById(R.id.resultTextView);
             dateTextView = itemView.findViewById(R.id.dateTextView);
         }

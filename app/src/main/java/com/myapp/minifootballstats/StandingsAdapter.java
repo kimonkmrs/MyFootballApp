@@ -44,8 +44,10 @@ public class StandingsAdapter extends RecyclerView.Adapter<StandingsAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Bind the data to each view for each item in the list
         Standing standing = standingsList.get(position);
-        holder.positionTextView.setText(String.valueOf(standing.getPosition()));
-        holder.teamNameTextView.setText(standing.getTeamName());
+//        holder.positionTextView.setText(String.valueOf(standing.getPosition()));
+        String displayName = standing.getPosition() + ". " + standing.getTeamName();
+        holder.teamNameTextView.setText(displayName);
+//        holder.teamNameTextView.setText(standing.getTeamName());
         holder.mpTextView.setText(String.valueOf(standing.getMatchesPlayed()));
         holder.winsTextView.setText(String.valueOf(standing.getWins()));
         holder.drawsTextView.setText(String.valueOf(standing.getDraws()));
@@ -65,13 +67,13 @@ public class StandingsAdapter extends RecyclerView.Adapter<StandingsAdapter.View
 
     // ViewHolder class to hold references to each view in the item layout
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView positionTextView, teamNameTextView, mpTextView, winsTextView,
+        TextView  teamNameTextView, mpTextView, winsTextView,
                 drawsTextView, lossesTextView, gfTextView, gaTextView, gdTextView, pointsTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // Initialize the TextViews by finding them by ID from the item layout
-            positionTextView = itemView.findViewById(R.id.positionTextView);
+//            positionTextView = itemView.findViewById(R.id.positionTextView);
             teamNameTextView = itemView.findViewById(R.id.teamNameTextView);
             mpTextView = itemView.findViewById(R.id.mpTextView);
             winsTextView = itemView.findViewById(R.id.winsTextView);

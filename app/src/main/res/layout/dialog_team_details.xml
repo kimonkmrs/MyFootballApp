@@ -25,6 +25,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="48dp"> <!-- Adds space below the icon -->
+        <!-- Two team names side by side -->
+
 
         <TextView
             android:id="@+id/teamNameTextView"
@@ -67,6 +69,7 @@
             android:text="Results"
             android:textStyle="bold"
             android:textSize="16sp"/>
+
 
         <!-- RecyclerView to Display Matches -->
         <androidx.recyclerview.widget.RecyclerView

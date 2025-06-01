@@ -4,34 +4,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="10dp">
 
-    <!-- Frame Container for Match Info -->
     <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/rectangular_background"
-        android:padding="16dp"
+        android:padding="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="180dp">
 
-            <!-- Game Name -->
             <TextView
-                android:id="@+id/gameTextView"
-                android:layout_width="wrap_content"
+                android:id="@+id/team1TextView"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Team1 - Team2"
+                android:breakStrategy="simple"
+                android:gravity="center"
+                android:text="Team 1 with a long name"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/dashTextView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.2"
+                />
+
+            <TextView
+                android:id="@+id/dashTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" - "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/team1TextView"
+                app:layout_constraintEnd_toStartOf="@id/team2TextView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.2"/>
+
+            <TextView
+                android:id="@+id/team2TextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Team 2 with a really long name too"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:breakStrategy="simple"
+
+                app:layout_constraintStart_toEndOf="@id/dashTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.2"/>
 
             <!-- Match Result -->
             <TextView
@@ -39,9 +71,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Result: 0-0"
+                android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:paddingTop="6dp"
-                app:layout_constraintTop_toBottomOf="@id/gameTextView"
+                android:paddingTop="30dp"
+                app:layout_constraintTop_toBottomOf="@id/team1TextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -50,14 +83,16 @@
                 android:id="@+id/dateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date: DD-MM-YYYY"
+                android:text="Date:   DD-MM-YYYY"
+                android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:paddingTop="6dp"
+                android:paddingTop="10dp"
                 app:layout_constraintTop_toBottomOf="@id/resultTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

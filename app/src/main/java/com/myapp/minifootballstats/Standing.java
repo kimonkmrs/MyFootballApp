@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Standing {
 
-    @SerializedName("Position")
-    private int position;
+   @SerializedName("Position")
+   private int position;
 
     @SerializedName("GroupID")
     private int groupID;  // Optional, if you need it
@@ -43,7 +43,7 @@ public class Standing {
     private int rosterCount;
 
     // Constructor
-    public Standing(int position, String teamName, int matchesPlayed, int wins, int draws, int losses, int goalsFor,
+    public Standing( int position,String teamName, int matchesPlayed, int wins, int draws, int losses, int goalsFor,
                     int goalsAgainst, int goalDifference, int points, int groupID, String groupName,int rosterCount) {
         this.position = position;
         this.teamName = teamName;
@@ -62,7 +62,7 @@ public class Standing {
 
     // Getters and Setters
     public int getPosition() {
-        return position;
+       return position;
     }
 
     public void setPosition(int position) {
