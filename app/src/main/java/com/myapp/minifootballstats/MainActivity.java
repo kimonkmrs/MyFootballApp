@@ -32,10 +32,12 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
     private ApiService apiService;
     private RecyclerView recyclerView;
     private MatchAdapter matchAdapter;
-    private TextView noMatchesTextView;
+//    private TextView noMatchesTextView;
     private List<Match> matchList = new ArrayList<>();
     private Button roundButtonPlus;
     private Button roundButtonMinus;
+    private View emptyStateContainer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,9 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
         recyclerView = findViewById(R.id.recyclerViewMatches);
         roundButtonPlus = findViewById(R.id.roundButtonPlus);
         roundButtonMinus = findViewById(R.id.roundButtonMinus);
-        noMatchesTextView = findViewById(R.id.noMatchesTextView);
+//        noMatchesTextView = findViewById(R.id.noMatchesTextView);
+        emptyStateContainer = findViewById(R.id.emptyStateContainer);
+
 
         // Handle UI and functionality based on user role
         /*if (isAdmin) {
@@ -137,9 +141,14 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
         }
 
         // Check if the match list is empty after removal
+
+//            noMatchesTextView.setVisibility(View.VISIBLE); // Show "no matches" message
         if (matchList.isEmpty()) {
-            noMatchesTextView.setVisibility(View.VISIBLE); // Show "no matches" message
+            emptyStateContainer.setVisibility(View.VISIBLE); // Show animation
+            recyclerView.setVisibility(View.GONE);
         }
+
+
     }
 
 
@@ -210,7 +219,9 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
                         matchList.clear();
                         matchList.addAll(matches);
                         matchAdapter.notifyDataSetChanged();
-                        noMatchesTextView.setVisibility(View.GONE);
+                        emptyStateContainer.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+//                        noMatchesTextView.setVisibility(View.GONE);
 
                         // Log the response to check the data
                         for (Match match : matches) {
@@ -222,19 +233,25 @@ public class MainActivity extends AppCompatActivity implements AddMatchBottomShe
                                     ", Match Date: " + match.getMatchDate());
                         }
                     } else {
-                        noMatchesTextView.setVisibility(View.VISIBLE); // No matches available
+//                        noMatchesTextView.setVisibility(View.VISIBLE); // No matches available
+                        emptyStateContainer.setVisibility(View.VISIBLE); // Show "No matches today"
+                        recyclerView.setVisibility(View.GONE);
                     }
                 } else {
                     Log.e("MainActivity", "Request failed: " + response.code());
-                    noMatchesTextView.setVisibility(View.VISIBLE); // Show the "No match today" message
+//                    noMatchesTextView.setVisibility(View.VISIBLE); // Show the "No match today" message
+                    emptyStateContainer.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Match>> call, Throwable t) {
                 Log.e("MainActivity", "Network error: " + t.getMessage());
-                noMatchesTextView.setVisibility(View.VISIBLE); // Show the "No match today" message
-                Toast.makeText(MainActivity.this, "Network error, please try again later.", Toast.LENGTH_SHORT).show();
+//                noMatchesTextView.setVisibility(View.VISIBLE); // Show the "No match today" message
+                emptyStateContainer.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                //Toast.makeText(MainActivity.this, "Network error, please try again later.", Toast.LENGTH_SHORT).show();
             }
         });
     }
