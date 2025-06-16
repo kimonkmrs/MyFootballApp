@@ -436,6 +436,21 @@ private void startHandlerLoop() {
             extraTimeAccumulated = prefs.getLong("extraTimeAccumulated", 0);
             extraPauseStartTime = prefs.getLong("extraPauseStartTime", 0);
             isPaused = prefs.getBoolean("isPaused", false);
+            long countdownStart = prefs.getLong("extraCountdownStartTime", -1);
+            if (countdownStart > 0) {
+                // Extra time countdown is in progress
+                long timeSinceCountdownStarted = System.currentTimeMillis() - countdownStart;
+                long remaining = extraTimeAccumulated - timeSinceCountdownStarted;
+
+                if (remaining > 0) {
+                    resumeExtraTimeCountdown(remaining);
+                } else {
+                    updateExtraTimeUI(0);
+                    stopAllTimers();
+                    Toast.makeText(PlayerListActivity.this, "Full Time", Toast.LENGTH_LONG).show();
+                }
+                return; // Skip rest since countdown is already running
+            }
 
             if (wasPaused) {
                 displayTimeMillis = TimerUtils.getElapsedTime(this, selectedMatchID);
@@ -493,6 +508,25 @@ private void startHandlerLoop() {
         updateExtraTimeUI(extraElapsed);
     }
 
+    private void resumeExtraTimeCountdown(long remainingMillis) {
+        extraTimeRunnable = new Runnable() {
+            long extraTimeRemaining = remainingMillis;
+
+            @Override
+            public void run() {
+                if (extraTimeRemaining > 0) {
+                    updateExtraTimeUI(extraTimeRemaining);
+                    extraTimeRemaining -= 1000;
+                    extraTimeHandler.postDelayed(this, 1000);
+                } else {
+                    updateExtraTimeUI(0);
+                    stopAllTimers();
+                    Toast.makeText(PlayerListActivity.this, "Full Time", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        extraTimeHandler.post(extraTimeRunnable);
+    }
 
     private void updateTimerDisplay(long millis) {
         int seconds = (int) (millis / 1000);
@@ -559,6 +593,11 @@ private void startHandlerLoop() {
     }
     private void startExtraTimeCountdown() {
         long totalExtraTimeMillis = extraTimeAccumulated;
+        long countdownStartTime = System.currentTimeMillis();
+
+        // Save countdown start time
+        SharedPreferences prefs = getSharedPreferences("TimerPrefs", MODE_PRIVATE);
+        prefs.edit().putLong("extraCountdownStartTime", countdownStartTime).apply();
 
         extraTimeRunnable = new Runnable() {
             long extraTimeRemaining = totalExtraTimeMillis;
@@ -578,6 +617,7 @@ private void startHandlerLoop() {
         };
         extraTimeHandler.post(extraTimeRunnable);
     }
+
     private void stopAllTimers() {
         isRunning = false;
         isPaused = false;
